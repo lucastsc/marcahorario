@@ -114,13 +114,26 @@ class _HomeState extends State<Home> {
                   IconButton(
                     icon: Icon(
                       Icons.edit,
+                      color: standardIconColor,
+                      size: 20.0,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
+                        enterEmployeeAvailable(index);
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.check_circle_outline,
                       color: _iconsColors[index],
                       size: 20.0,
                     ),
                     onPressed: () {
                       setState(() {
                         //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
-                        selectTimeAvailable(index,_iconsColors[index]);
+                        confirmSchedule(index,_iconsColors[index]);
                       });
                     },
                   )
@@ -133,7 +146,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void selectTimeAvailable(int index,Color color){
+  void enterEmployeeAvailable(int index){
     showDialog(context: context,
         builder: (_) => AlertDialog(
           content: Container(
@@ -151,24 +164,53 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
               //addTodo();
               setState(() {
-                _iconsColors[index] = alternateIconColor;
+                //_iconsColors[index] = standardIconColor;
                 _tileSubtitles[index] = "Disponível: " + _nameController.text;
               });
 
-            }, child: Text("Agendar")),
+            }, child: Text("Inserir")),
             FlatButton(onPressed: () {
               Navigator.pop(context);
               setState(() {
-                _iconsColors[index] = standardIconColor;
+                //_iconsColors[index] = standardIconColor;
                 _tileSubtitles[index] = " ";
               });
 
-            }, child: Text("Desmarcar")),
+            }, child: Text("Desfazer")),
           ],
         )
     );
   }
 
+  void confirmSchedule(int index,Color color){
+    showDialog(context: context,
+        builder: (_) => AlertDialog(
+          content: Container(
+            width: double.maxFinite,
+            child: Text("Confirma disponibilidade?")
+          ),
+          actions: <Widget>[
+            FlatButton(onPressed: () {
+              Navigator.pop(context);
+              //addTodo();
+              setState(() {
+                _iconsColors[index] = alternateIconColor;
+                //_tileSubtitles[index] = "Disponível: " + _nameController.text;
+              });
+
+            }, child: Text("Confirma")),
+            FlatButton(onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _iconsColors[index] = standardIconColor;
+                //_tileSubtitles[index] = " ";
+              });
+
+            }, child: Text("Não")),
+          ],
+        )
+    );
+  }
 
 
 }
