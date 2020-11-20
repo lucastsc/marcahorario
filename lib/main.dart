@@ -59,24 +59,7 @@ class _HomeState extends State<Home> {
       key: _scaffoldKey,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            DatePicker.showDateTimePicker(context,
-                showTitleActions: true,
-                minTime: DateTime(2020, 1, 1),
-                maxTime: DateTime(2021, 12, 31),
-                onChanged: (date) {
-                  print('change $date');
-                },
-                onConfirm: (date) {
-                  print('confirm $date');
-                  _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
-                  _titleTile = DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString();
-
-                  setState(() {
-
-                  });
-                },
-                currentTime: DateTime.now(),
-                locale: LocaleType.pt);
+            invokeDatePicker();
           },
           child: Icon(Icons.add),
         ),
@@ -172,6 +155,7 @@ class _HomeState extends State<Home> {
                           //Show dialog box to update item
                           //showUpdateDialog(dataList[position]);
                           //enterEmployeeAvailable(position);
+                          showUpdateDialog(dataList[position]);
                         }),
                         IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
                           //Show dialog box to delete item
@@ -203,6 +187,57 @@ class _HomeState extends State<Home> {
         scheduleTile()
       ],
     );
+  }
+
+  void invokeDatePicker(){
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        minTime: DateTime(2020, 1, 1),
+        maxTime: DateTime(2021, 12, 31),
+        onChanged: (date) {
+          print('change $date');
+        },
+        onConfirm: (date) {
+          print('confirm $date');
+          _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
+          _titleTile = DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString();
+
+          setState(() {
+
+          });
+        },
+        currentTime: DateTime.now(),
+        locale: LocaleType.pt);
+  }
+
+  void showUpdateDialog(Data data) {
+
+    _nameController.text = data.employee;
+
+    showDialog(context: context,
+        builder: (_) => AlertDialog(
+          content: Container(
+            width: double.maxFinite,
+            child: TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: "Atualizar funcionário disponível",
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(onPressed: () {
+              Navigator.pop(context);
+              data.employee = _nameController.text;
+              updateData(data);
+            }, child: Text("Atualizar")),
+            FlatButton(onPressed: () {
+              Navigator.pop(context);
+            }, child: Text("Cancelar")),
+          ],
+        )
+    );
+
   }
 
   Widget scheduleTile(){
@@ -386,6 +421,39 @@ class _HomeState extends State<Home> {
       if (response.statusCode == 200) {
         //Successfully Deleted
         _scaffoldKey.currentState.showSnackBar(SnackBar(content: (Text("Disponibilidade excluída!")),duration: Duration(seconds: 1),));
+        setState(() {
+
+        });
+      } else {
+        //Handle error
+      }
+    });
+
+  }
+
+  void updateData(Data data) {
+
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text("Atualizando disponibilidade..."),
+        CircularProgressIndicator(),
+      ],
+    ),
+      duration: Duration(minutes: 1),
+    ),);
+
+
+    DataUtils.updateData(data)
+        .then((res) {
+
+      _scaffoldKey.currentState.hideCurrentSnackBar();
+
+      Response response = res;
+      if (response.statusCode == 200) {
+        //Successfully Deleted
+        _nameController.text = "";
+        _scaffoldKey.currentState.showSnackBar(SnackBar(content: (Text("Disponibilidade atualizada!"))));
         setState(() {
 
         });

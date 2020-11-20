@@ -37,6 +37,22 @@ class DataUtils {
     return response;
   }
 
+  //UPDATE
+  static Future updateData(Data data) async{
+
+    String apiUrl = _baseUrl + "Data/${data.objectId}";
+
+    Response response = await put(apiUrl, headers: {
+      'X-Parse-Application-Id' : kParseApplicationId,
+      'X-Parse-REST-API-Key' : kParseRestApiKey,
+      'Content-Type' : 'application/json',
+    },
+        body: json.encode(data.toJson())
+    );
+
+    return response;
+  }
+
   //DELETE
   static Future deleteData(String objectId) async{
 
