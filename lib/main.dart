@@ -42,7 +42,8 @@ class _HomeState extends State<Home> {
   var _iconsColors = List<Color>();
   Color standardIconColor = Colors.black;
   Color alternateIconColor = Colors.orange;
-  TextEditingController _taskController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  String _tileSubtitle = " ";
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +106,7 @@ class _HomeState extends State<Home> {
           return Card(
             child: ListTile(
               title: Text(_listTiles[index]),
+              subtitle: Text(_tileSubtitle),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -136,9 +138,9 @@ class _HomeState extends State<Home> {
           content: Container(
             width: double.maxFinite,
             child: TextField(
-              controller: _taskController,
+              controller: _nameController,
               decoration: InputDecoration(
-                labelText: "Seu nome",
+                labelText: "Funcionário",
               ),
             ),
           ),
@@ -149,6 +151,7 @@ class _HomeState extends State<Home> {
               //addTodo();
               setState(() {
                 _iconsColors[index] = alternateIconColor;
+                _tileSubtitle = "Disponível: " + _nameController.text;
               });
 
             }, child: Text("Agendar")),
@@ -156,6 +159,7 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
               setState(() {
                 _iconsColors[index] = standardIconColor;
+                _tileSubtitle = " ";
               });
 
             }, child: Text("Desmarcar")),
@@ -163,6 +167,8 @@ class _HomeState extends State<Home> {
         )
     );
   }
+
+
 
 }
 
