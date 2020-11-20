@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:marca_horario/model/data.dart';
+import 'package:marca_horario/network_utils/data_utils.dart';
+import 'package:http/http.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,10 +47,12 @@ class _HomeState extends State<Home> {
   Color alternateIconColor = Colors.orange;
   TextEditingController _nameController = TextEditingController();
   var _tileSubtitles = List<String>();
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             DatePicker.showDateTimePicker(context,
@@ -193,6 +198,7 @@ class _HomeState extends State<Home> {
             FlatButton(onPressed: () {
               Navigator.pop(context);
               //addTodo();
+              addData(index);
               setState(() {
                 _iconsColors[index] = alternateIconColor;
                 //_tileSubtitles[index] = "Disponível: " + _nameController.text;
@@ -212,6 +218,41 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void addData(int index) {
+
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Row(
+      children: <Widget>[
+        Text("Adding task"),
+        CircularProgressIndicator(),
+      ],
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    ),
+      duration: Duration(minutes: 1),
+    ));
+
+    Data data = Data(employee: _tileSubtitles[index], dateTime: _listTiles[index]);
+
+    DataUtils.addData(data)
+        .then((res) {
+
+      _scaffoldKey.currentState.hideCurrentSnackBar();
+
+      Response response = res;
+      if (response.statusCode == 201) {
+        //Successful
+        _nameController.text = "";
+
+        _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Data added!"), duration: Duration(seconds: 1),));
+
+        setState(() {
+          //Update UI
+        });
+
+      }
+
+    });
+
+  }
 
 }
 
