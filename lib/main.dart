@@ -17,12 +17,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  var _listTiles = List<String>();
-  Color _iconColor = Colors.black;
-  var _iconsColors = List<Color>();
-  Color standardIconColor = Colors.black;
-  Color alternateIconColor = Colors.orange;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,39 +25,56 @@ class _MyAppState extends State<MyApp> {
           GlobalWidgetsLocalizations.delegate
         ],
         supportedLocales: [const Locale('pt', 'BR')],
-        home: Builder(
-          builder: (context) =>
-              Scaffold(
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () {
-                    DatePicker.showDateTimePicker(context,
-                        showTitleActions: true,
-                        minTime: DateTime(2020, 1, 1),
-                        maxTime: DateTime(2021, 12, 31),
-                        onChanged: (date) {
-                          print('change $date');
-                        },
-                        onConfirm: (date) {
-                          print('confirm $date');
-                          _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
-                          _iconsColors.add(standardIconColor);
-                          setState(() {
+        home: Home()
+    );
+  }
+}
 
-                          });
-                        },
-                        currentTime: DateTime.now(),
-                        locale: LocaleType.pt);
-                  },
-                  child: Icon(Icons.add),
-                ),
-                appBar: AppBar(
-                  title: Text('Marca Horário'),
-                ),
-                // body: Center(
-                //   child: Text('Hello World'),
-                body: bodyStartScreen()
-              ),
-        )
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+
+  var _listTiles = List<String>();
+  Color _iconColor = Colors.black;
+  var _iconsColors = List<Color>();
+  Color standardIconColor = Colors.black;
+  Color alternateIconColor = Colors.orange;
+  TextEditingController _taskController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            DatePicker.showDateTimePicker(context,
+                showTitleActions: true,
+                minTime: DateTime(2020, 1, 1),
+                maxTime: DateTime(2021, 12, 31),
+                onChanged: (date) {
+                  print('change $date');
+                },
+                onConfirm: (date) {
+                  print('confirm $date');
+                  _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
+                  _iconsColors.add(standardIconColor);
+                  setState(() {
+
+                  });
+                },
+                currentTime: DateTime.now(),
+                locale: LocaleType.pt);
+          },
+          child: Icon(Icons.add),
+        ),
+        appBar: AppBar(
+          title: Text('Marca Horário'),
+        ),
+        // body: Center(
+        //   child: Text('Hello World'),
+        body: bodyStartScreen()
     );
   }
 
@@ -106,6 +117,7 @@ class _MyAppState extends State<MyApp> {
                     onPressed: () {
                       setState(() {
                         (_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
+                        selectTimeAvailable();
                       });
                     },
                   )
@@ -117,8 +129,35 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-}
 
+  void selectTimeAvailable(){
+    showDialog(context: context,
+        builder: (_) => AlertDialog(
+          content: Container(
+            width: double.maxFinite,
+            child: TextField(
+              controller: _taskController,
+              decoration: InputDecoration(
+                labelText: "Enter task",
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(onPressed: () {
+
+              Navigator.pop(context);
+              //addTodo();
+
+            }, child: Text("Add")),
+            FlatButton(onPressed: () {
+              Navigator.pop(context);
+            }, child: Text("Cancel")),
+          ],
+        )
+    );
+  }
+
+}
 
 
 
