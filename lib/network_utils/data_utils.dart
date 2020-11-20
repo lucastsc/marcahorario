@@ -36,4 +36,17 @@ class DataUtils {
 
     return response;
   }
+
+  //DELETE
+  static Future deleteData(String objectId) async{
+
+    String apiUrl = _baseUrl + "Data/$objectId";
+
+    Response response = await delete(apiUrl, headers: {
+      'X-Parse-Application-Id' : kParseApplicationId,
+      'X-Parse-REST-API-Key' : kParseRestApiKey,
+    });
+
+    return response;
+  }
 }

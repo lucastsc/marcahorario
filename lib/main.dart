@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
   var _listTiles = List<String>();
   Color _iconColor = Colors.black;
   Color standardIconColor = Colors.black;
-  Color alternateIconColor = Colors.orange;
+  Color alternateIconColor = Colors.green;
   TextEditingController _nameController = TextEditingController();
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   String standardTileTitle = "Adicione um horário disponível...";
@@ -176,7 +176,13 @@ class _HomeState extends State<Home> {
                         IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
                           //Show dialog box to delete item
                           //deleteTodo(todoList[position].objectId);
-                        })
+                        }),
+                        IconButton(icon: Icon(Icons.delete), onPressed: () {
+                          //Show dialog box to update item
+                          //showUpdateDialog(dataList[position]);
+                          //enterEmployeeAvailable(position);
+                          deleteData(dataList[position].objectId);
+                        }),
                       ],
                     ),
                   ),
@@ -354,6 +360,38 @@ class _HomeState extends State<Home> {
 
       }
 
+    });
+
+  }
+
+  void deleteData(String objectId) {
+
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children:  <Widget>[
+        Text("Excluindo disponibilidade..."),
+        CircularProgressIndicator(),
+      ],
+    ),
+      duration: Duration(minutes: 1),
+    ),);
+
+
+    DataUtils.deleteData(objectId)
+        .then((res) {
+
+      _scaffoldKey.currentState.hideCurrentSnackBar();
+
+      Response response = res;
+      if (response.statusCode == 200) {
+        //Successfully Deleted
+        _scaffoldKey.currentState.showSnackBar(SnackBar(content: (Text("Disponibilidade excluída!")),duration: Duration(seconds: 1),));
+        setState(() {
+
+        });
+      } else {
+        //Handle error
+      }
     });
 
   }
