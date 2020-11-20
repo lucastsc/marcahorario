@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
   Color standardIconColor = Colors.black;
   Color alternateIconColor = Colors.orange;
   TextEditingController _nameController = TextEditingController();
-  String _tileSubtitle = " ";
+  var _tileSubtitles = List<String>();
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +61,7 @@ class _HomeState extends State<Home> {
                   print('confirm $date');
                   _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
                   _iconsColors.add(standardIconColor);
+                  _tileSubtitles.add(" ");
                   setState(() {
 
                   });
@@ -106,13 +107,13 @@ class _HomeState extends State<Home> {
           return Card(
             child: ListTile(
               title: Text(_listTiles[index]),
-              subtitle: Text(_tileSubtitle),
+              subtitle: Text(_tileSubtitles[index]),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   IconButton(
                     icon: Icon(
-                      Icons.check_circle_outline,
+                      Icons.edit,
                       color: _iconsColors[index],
                       size: 20.0,
                     ),
@@ -151,7 +152,7 @@ class _HomeState extends State<Home> {
               //addTodo();
               setState(() {
                 _iconsColors[index] = alternateIconColor;
-                _tileSubtitle = "Disponível: " + _nameController.text;
+                _tileSubtitles[index] = "Disponível: " + _nameController.text;
               });
 
             }, child: Text("Agendar")),
@@ -159,7 +160,7 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
               setState(() {
                 _iconsColors[index] = standardIconColor;
-                _tileSubtitle = " ";
+                _tileSubtitles[index] = " ";
               });
 
             }, child: Text("Desmarcar")),
