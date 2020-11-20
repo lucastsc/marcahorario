@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -88,6 +90,7 @@ class _HomeState extends State<Home> {
   Widget bodyStartScreen(){
     return Column(
       children: [
+        //the main title of the screen
         Padding(
           padding: EdgeInsets.all(16.0),
           child: Text("Horários Possíveis",
@@ -95,6 +98,46 @@ class _HomeState extends State<Home> {
                 fontSize: 18.0
             ),
           ),
+        ),
+        //gets available employees and datetimes from the server
+        FutureBuilder(builder: (context,snapshot){
+          if (snapshot.data != null) {
+            List<Data> dataList = snapshot.data;
+
+            return Expanded(
+              child: ListView.builder(itemBuilder: (_, position) {
+                return Card(
+                  child: ListTile(
+                    title: Text(dataList[position].dateTime),
+                    subtitle: Text(dataList[position].employee),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        IconButton(icon: Icon(Icons.edit), onPressed: () {
+                          //Show dialog box to update item
+                          //showUpdateDialog(dataList[position]);
+                          //enterEmployeeAvailable(position);
+                        }),
+                        IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
+                          //Show dialog box to delete item
+                          //deleteTodo(todoList[position].objectId);
+                        })
+                      ],
+                    ),
+                  ),
+                );
+              },
+                itemCount: dataList.length,
+              ),
+            );
+
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+          future: getDataList(),
         ),
         Expanded(
           child: listTiles(),
@@ -139,6 +182,7 @@ class _HomeState extends State<Home> {
                       setState(() {
                         //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
                         confirmSchedule(index,_iconsColors[index]);
+                        
                       });
                     },
                   )
@@ -222,7 +266,7 @@ class _HomeState extends State<Home> {
 
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Row(
       children: <Widget>[
-        Text("Adding task"),
+        Text("Adicionando informações..."),
         CircularProgressIndicator(),
       ],
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,7 +286,7 @@ class _HomeState extends State<Home> {
         //Successful
         _nameController.text = "";
 
-        _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Data added!"), duration: Duration(seconds: 1),));
+        _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Informações disponibilizadas!"), duration: Duration(seconds: 1),));
 
         setState(() {
           //Update UI
@@ -254,6 +298,28 @@ class _HomeState extends State<Home> {
 
   }
 
+  Future <List<Data>> getDataList() async{
+
+    List<Data> todoList = [];
+
+    Response response = await DataUtils.getDataList();
+    print("Code is ${response.statusCode}");
+    print("Response is ${response.body}");
+
+    if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      var results = body["results"];
+
+      for (var todo in results) {
+        todoList.add(Data.fromJson(todo));
+      }
+
+    } else {
+      //Handle error
+    }
+
+    return todoList;
+  }
 }
 
 

@@ -23,4 +23,17 @@ class DataUtils {
 
     return response;
   }
+
+  //READ
+  static Future getDataList() async{
+
+    String apiUrl = _baseUrl + "Data";
+
+    Response response = await get(apiUrl, headers: {
+      'X-Parse-Application-Id' : kParseApplicationId,
+      'X-Parse-REST-API-Key' : kParseRestApiKey,
+    });
+
+    return response;
+  }
 }
