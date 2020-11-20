@@ -44,14 +44,14 @@ class _HomeState extends State<Home> {
 
   var _listTiles = List<String>();
   Color _iconColor = Colors.black;
-  var _iconsColors = List<Color>();
   Color standardIconColor = Colors.black;
   Color alternateIconColor = Colors.orange;
   TextEditingController _nameController = TextEditingController();
-  var _tileSubtitles = List<String>();
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _titleTile = " ";
+  String standardTileTitle = "Adicione um horário disponível...";
+  String _titleTile = "Adicione um horário disponível...";
   String _tileSubtitle = "Edite o nome do funcionário...";
+  int _selectedIndexBottomNavBar = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +70,6 @@ class _HomeState extends State<Home> {
                   print('confirm $date');
                   _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
                   _titleTile = DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString();
-                  _iconsColors.add(standardIconColor);
-                  _tileSubtitles.add(" ");
 
                   setState(() {
 
@@ -82,6 +80,7 @@ class _HomeState extends State<Home> {
           },
           child: Icon(Icons.add),
         ),
+        bottomNavigationBar: bottomNavigationBar(),
         appBar: AppBar(
           title: Text('Marca Horário'),
         ),
@@ -90,6 +89,58 @@ class _HomeState extends State<Home> {
         body: bodyStartScreen()
     );
   }
+
+  Widget bottomNavigationBar(){
+
+    void _onItemTapped(int index) {
+      setState(() {
+        _selectedIndexBottomNavBar = index;
+      });
+      print(_selectedIndexBottomNavBar);
+      if(_selectedIndexBottomNavBar == 2){
+        DatePicker.showDateTimePicker(context,
+            showTitleActions: true,
+            minTime: DateTime(2020, 1, 1),
+            maxTime: DateTime(2021, 12, 31),
+            onChanged: (date) {
+              print('change $date');
+            },
+            onConfirm: (date) {
+              print('confirm $date');
+              _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
+              _titleTile = DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString();
+
+              setState(() {
+
+              });
+            },
+            currentTime: DateTime.now(),
+            locale: LocaleType.pt);
+      }
+    }
+
+    return BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Funcionário',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.access_time),
+          label: 'Marcar',
+        ),
+      ],
+      currentIndex: _selectedIndexBottomNavBar,
+      selectedItemColor: Colors.amber[800],
+      onTap: _onItemTapped,
+    );
+  }
+
+
 
   Widget bodyStartScreen(){
     return Column(
@@ -143,51 +194,48 @@ class _HomeState extends State<Home> {
         },
           future: getDataList(),
         ),
-        Expanded(
-          child: scheduleTile(),
-        )
+        scheduleTile()
       ],
     );
   }
 
   Widget scheduleTile(){
-    return Card(
-      child: ListTile(
-        title: Text(_titleTile),
-        subtitle: Text(_tileSubtitle),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: standardIconColor,
-                size: 20.0,
+    return Padding(
+      padding: EdgeInsets.only(bottom: 80.0),
+      child: Card(
+        color: Colors.grey,
+        child: ListTile(
+          title: Text(_titleTile),
+          subtitle: Text(_tileSubtitle),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.edit,
+                  color: standardIconColor,
+                  size: 20.0,
+                ),
+                onPressed: () {
+                  setState(() {
+                    employeeAvailable();
+                  });
+                },
               ),
-              onPressed: () {
-                setState(() {
-                  //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
-                  //enterEmployeeAvailable(index);
-                  employeeAvailable();
-                });
-              },
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.check_circle_outline,
-                color: _iconColor,
-                size: 20.0,
-              ),
-              onPressed: () {
-                setState(() {
-                  //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
-                  (_titleTile != " ") ? confirmSchedule() : fillTimeDialog();
-
-                  //_listTiles.removeAt(index);
-                });
-              },
-            )
-          ],
+              IconButton(
+                icon: Icon(
+                  Icons.check_circle_outline,
+                  color: _iconColor,
+                  size: 20.0,
+                ),
+                onPressed: () {
+                  setState(() {
+                    (_titleTile != standardTileTitle) ? confirmSchedule() : fillTimeDialog();
+                  });
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -227,7 +275,6 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
               //addTodo();
               setState(() {
-                //_iconsColors[index] = standardIconColor;
                 _tileSubtitle = "Disponível: " + _nameController.text;
               });
 
@@ -235,7 +282,6 @@ class _HomeState extends State<Home> {
             FlatButton(onPressed: () {
               Navigator.pop(context);
               setState(() {
-                //_iconsColors[index] = standardIconColor;
                 _tileSubtitle = " ";
               });
 
@@ -244,91 +290,6 @@ class _HomeState extends State<Home> {
         )
     );
   }
-
-  // Widget listTiles(){
-  //   return Container(
-  //     margin: EdgeInsets.all(16.0),
-  //     child: ListView.builder(
-  //       itemCount: _listTiles.length,
-  //       itemBuilder: (BuildContext context, int index){
-  //         return Card(
-  //           child: ListTile(
-  //             title: Text(_listTiles[index]),
-  //             subtitle: Text(_tileSubtitles[index]),
-  //             trailing: Row(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: <Widget>[
-  //                 IconButton(
-  //                   icon: Icon(
-  //                     Icons.edit,
-  //                     color: standardIconColor,
-  //                     size: 20.0,
-  //                   ),
-  //                   onPressed: () {
-  //                     setState(() {
-  //                       //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
-  //                       enterEmployeeAvailable(index);
-  //                     });
-  //                   },
-  //                 ),
-  //                 IconButton(
-  //                   icon: Icon(
-  //                     Icons.check_circle_outline,
-  //                     color: _iconsColors[index],
-  //                     size: 20.0,
-  //                   ),
-  //                   onPressed: () {
-  //                     setState(() {
-  //                       //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
-  //                       confirmSchedule(index,_iconsColors[index]);
-  //                       _listTiles.removeAt(index);
-  //                     });
-  //                   },
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // void enterEmployeeAvailable(int index){
-  //   showDialog(context: context,
-  //       builder: (_) => AlertDialog(
-  //         content: Container(
-  //           width: double.maxFinite,
-  //           child: TextField(
-  //             controller: _nameController,
-  //             decoration: InputDecoration(
-  //               labelText: "Funcionário",
-  //             ),
-  //           ),
-  //         ),
-  //         actions: <Widget>[
-  //           FlatButton(onPressed: () {
-  //
-  //             Navigator.pop(context);
-  //             //addTodo();
-  //             setState(() {
-  //               //_iconsColors[index] = standardIconColor;
-  //               _tileSubtitles = "Disponível: " + _nameController.text;
-  //             });
-  //
-  //           }, child: Text("Inserir")),
-  //           FlatButton(onPressed: () {
-  //             Navigator.pop(context);
-  //             setState(() {
-  //               //_iconsColors[index] = standardIconColor;
-  //               _tileSubtitle = " ";
-  //             });
-  //
-  //           }, child: Text("Desfazer")),
-  //         ],
-  //       )
-  //   );
-  // }
 
   void confirmSchedule(){
     showDialog(context: context,
