@@ -181,7 +181,8 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 setState(() {
                   //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
-                  confirmSchedule();
+                  (_titleTile != " ") ? confirmSchedule() : fillTimeDialog();
+
                   //_listTiles.removeAt(index);
                 });
               },
@@ -189,6 +190,22 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+    );
+  }
+
+  void fillTimeDialog(){
+    showDialog(context: context,
+        builder: (_) => AlertDialog(
+          content: Container(
+            width: double.maxFinite,
+            child: Text("Insira o horário disponível!"),
+          ),
+          actions: <Widget>[
+            FlatButton(onPressed: () {
+              Navigator.pop(context);
+            }, child: Text("OK")),
+          ],
+        )
     );
   }
 
