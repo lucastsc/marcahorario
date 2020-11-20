@@ -123,8 +123,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-
-
   Widget bodyStartScreen(){
     return Column(
       children: [
@@ -143,7 +141,8 @@ class _HomeState extends State<Home> {
             List<Data> dataList = snapshot.data;
 
             return Expanded(
-              child: ListView.builder(itemBuilder: (_, position) {
+              child: ListView.builder(
+                itemBuilder: (_, position) {
                 return Card(
                   child: ListTile(
                     title: Text(dataList[position].dateTime),
@@ -153,18 +152,13 @@ class _HomeState extends State<Home> {
                       children: <Widget>[
                         IconButton(icon: Icon(Icons.edit), onPressed: () {
                           //Show dialog box to update item
-                          //showUpdateDialog(dataList[position]);
-                          //enterEmployeeAvailable(position);
                           showUpdateDialog(dataList[position]);
                         }),
                         IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
-                          //Show dialog box to delete item
-                          //deleteTodo(todoList[position].objectId);
+
                         }),
+                        //Show dialog box to delete item
                         IconButton(icon: Icon(Icons.delete), onPressed: () {
-                          //Show dialog box to update item
-                          //showUpdateDialog(dataList[position]);
-                          //enterEmployeeAvailable(position);
                           deleteData(dataList[position].objectId);
                         }),
                       ],
@@ -183,6 +177,9 @@ class _HomeState extends State<Home> {
           }
         },
           future: getDataList(),
+        ),
+        Divider(
+          color: Colors.black,
         ),
         scheduleTile()
       ],
