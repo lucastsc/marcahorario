@@ -116,8 +116,8 @@ class _HomeState extends State<Home> {
                     ),
                     onPressed: () {
                       setState(() {
-                        (_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
-                        selectTimeAvailable();
+                        //(_iconsColors[index] == standardIconColor) ? _iconsColors[index] = alternateIconColor : _iconsColors[index] = standardIconColor;
+                        selectTimeAvailable(index,_iconsColors[index]);
                       });
                     },
                   )
@@ -130,7 +130,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void selectTimeAvailable(){
+  void selectTimeAvailable(int index,Color color){
     showDialog(context: context,
         builder: (_) => AlertDialog(
           content: Container(
@@ -138,7 +138,7 @@ class _HomeState extends State<Home> {
             child: TextField(
               controller: _taskController,
               decoration: InputDecoration(
-                labelText: "Enter task",
+                labelText: "Seu nome",
               ),
             ),
           ),
@@ -147,11 +147,18 @@ class _HomeState extends State<Home> {
 
               Navigator.pop(context);
               //addTodo();
+              setState(() {
+                _iconsColors[index] = alternateIconColor;
+              });
 
-            }, child: Text("Add")),
+            }, child: Text("Agendar")),
             FlatButton(onPressed: () {
               Navigator.pop(context);
-            }, child: Text("Cancel")),
+              setState(() {
+                _iconsColors[index] = standardIconColor;
+              });
+
+            }, child: Text("Desmarcar")),
           ],
         )
     );
