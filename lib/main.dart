@@ -12,8 +12,51 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:marca_horario/model/data.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:http/http.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:marca_horario/constants.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  // Parse().initialize(
+  //     kParseApplicationId,
+  //     kParseServerUrl,
+  //     masterKey: kParseMasterKey,
+  //     clientKey: kParseClientKey,
+  //     debug: true,
+  //     liveQueryUrl: kLiveQueryUrl,
+  //     //autoSendSessionId: true
+  // );
+  //
+  // var dietPlan = ParseObject('DietPlan')
+  //   ..set('Name', 'Ketogenic')
+  //   ..set('Fat', 65);
+  // await dietPlan.save();
+  //
+  // var response = await dietPlan.save();
+  // if (response.success) {
+  //   dietPlan = response.result;
+  // }
+  //
+  // final LiveQuery liveQuery = LiveQuery();
+  //
+  // QueryBuilder<ParseObject> query =
+  // QueryBuilder<ParseObject>(ParseObject('DietPlan'))
+  //   ..whereEqualTo('intNumber', 1);
+  //
+  // Subscription subscription = await liveQuery.client.subscribe(query);
+  //
+  // subscription.on(LiveQueryEvent.delete, (value) {
+  //   print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
+  //   print((value as ParseObject).objectId);
+  //   print((value as ParseObject).updatedAt);
+  //   print((value as ParseObject).createdAt);
+  //   print((value as ParseObject).get('objectId'));
+  //   print((value as ParseObject).get('updatedAt'));
+  //   print((value as ParseObject).get('createdAt'));
+  // });
+
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -54,6 +97,7 @@ class _HomeState extends State<Home> {
   int _selectedIndexBottomNavBar = 0;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
 
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -80,7 +124,6 @@ class _HomeState extends State<Home> {
         ),
     );
   }
-
 
 
   Widget bottomNavigationBar(){

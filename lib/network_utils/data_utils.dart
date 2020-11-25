@@ -7,7 +7,7 @@ import 'package:marca_horario/constants.dart';
 class DataUtils {
 
   //static final String _baseUrl = "https://parseapi.back4app.com/classes/";
-  static final String _baseUrl = "https://27ccb1f9bd52.ngrok.io/parse/classes/";
+  static final String _baseUrl = baseUrl;
 
   //CREATE
   static Future<Response> addData(Data data) async {
