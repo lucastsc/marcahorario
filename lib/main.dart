@@ -52,26 +52,36 @@ class _HomeState extends State<Home> {
   String _titleTile = "Adicione um horário disponível...";
   String _tileSubtitle = "Edite o nome do funcionário...";
   int _selectedIndexBottomNavBar = 0;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            invokeDatePicker();
-          },
-          child: Icon(Icons.add),
+    return RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: () async {
+          setState(() {
+
+        });},
+        child: Scaffold(
+            key: _scaffoldKey,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                invokeDatePicker();
+              },
+              child: Icon(Icons.add),
+            ),
+            bottomNavigationBar: bottomNavigationBar(),
+            appBar: AppBar(
+              title: Text('Marca Horário'),
+            ),
+            // body: Center(
+            //   child: Text('Hello World'),
+            body: bodyStartScreen()
         ),
-        bottomNavigationBar: bottomNavigationBar(),
-        appBar: AppBar(
-          title: Text('Marca Horário'),
-        ),
-        // body: Center(
-        //   child: Text('Hello World'),
-        body: bodyStartScreen()
     );
   }
+
+
 
   Widget bottomNavigationBar(){
 
