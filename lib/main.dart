@@ -12,7 +12,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:marca_horario/model/data.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:http/http.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:marca_horario/screens/credentials.dart';
+import 'package:marca_horario/screens/login.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 
 void main() async{
@@ -37,8 +39,6 @@ class _MyAppState extends State<MyApp> {
         home: Home()
     );
   }
-
-
 }
 
 class Home extends StatefulWidget {
@@ -48,6 +48,88 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  String text = '';
+
+  Future<void> initData() async {
+    await Parse().initialize(
+      kParseApplicationId,
+      kParseServerUrl,
+      masterKey: kParseMasterKey,
+      clientKey: kParseClientKey,
+      debug: true,
+      liveQueryUrl: kLiveQueryUrl,
+      autoSendSessionId: true,
+    );
+
+    final ParseResponse response = await Parse().healthCheck();
+
+    if (response.success) {
+      await test();
+      text += 'testing\n';
+      print(text);
+    } else {
+      text += 'Server health check failed';
+      print(text);
+    }
+  }
+
+  Future<void> test() async {
+
+    final LiveQuery liveQuery = LiveQuery();
+
+    QueryBuilder<ParseObject> query =
+    QueryBuilder<ParseObject>(ParseObject('Data'));
+      //..whereEqualTo('intNumber', 1);
+
+    Subscription subscription = await liveQuery.client.subscribe(query);
+
+    subscription.on(LiveQueryEvent.create, (value) {
+      setState(() {
+
+      });
+      print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+
+    subscription.on(LiveQueryEvent.update, (value) {
+      setState(() {
+
+      });
+      print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+
+    subscription.on(LiveQueryEvent.delete, (value) {
+      setState(() {
+
+      });
+      print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
+
 
   var _listTiles = List<String>();
   Color _iconColor = Colors.black;
@@ -72,6 +154,12 @@ class _HomeState extends State<Home> {
         child: Scaffold(
             key: _scaffoldKey,
             bottomNavigationBar: bottomNavigationBar(),
+            floatingActionButton: FloatingActionButton(
+              onPressed: (){
+                // var user =  ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com").create();
+                // var teste = ParseObject('Testando').create();
+              },
+            ),
             appBar: AppBar(
               title: Text('Marca Horário'),
             ),
@@ -90,6 +178,19 @@ class _HomeState extends State<Home> {
         _selectedIndexBottomNavBar = index;
       });
       print(_selectedIndexBottomNavBar);
+      if(_selectedIndexBottomNavBar == 0){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CredentialsScreen()),
+        );
+      }
+      if(_selectedIndexBottomNavBar == 1){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      }
+
       if(_selectedIndexBottomNavBar == 2){
         DatePicker.showDateTimePicker(context,
             showTitleActions: true,
@@ -120,7 +221,7 @@ class _HomeState extends State<Home> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Funcionário',
+          label: 'Login',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.access_time),
@@ -505,6 +606,8 @@ class _HomeState extends State<Home> {
 
     return dataList;
   }
+
+
 }
 
 

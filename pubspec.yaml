@@ -23,7 +23,6 @@ environment:
 dependencies:
   http: ^0.12.2
   parse_server_sdk_flutter: ^2.0.1
-  parse_server_sdk: ^2.0.1
   intl: ^0.16.1
   flutter_datetime_picker: ^1.4.0
   flutter:
