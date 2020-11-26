@@ -1,10 +1,10 @@
 //const kParseApplicationId = "kQJzUzTqahVhZgIFkhYAEhk0anSpOsPwJPyU4yh7";
 //const kParseRestApiKey = "KqQ3HCfWuBIqldAUBbUSLdlDt6KmmhmarhzRU84Y";
+//const baseUrl = "https://parseapi.back4app.com/classes/";
 const kParseApplicationId = "myAppId";
 const kParseRestApiKey = "myRestKey";
-const kParseServerUrl = "https://278743fe167c.ngrok.io/parse";
-//const baseUrl = "https://parseapi.back4app.com/classes/";
-const baseUrl = "https://278743fe167c.ngrok.io/parse/classes/";
+const kParseServerUrl = "https://a8bc82dabd3b.ngrok.io/parse";
+const baseUrl = "https://a8bc82dabd3b.ngrok.io/parse/classes/";
 const kParseClientKey = "myClientKey";
-const kLiveQueryUrl = "https://278743fe167c.ngrok.io"; //change this
+const kLiveQueryUrl = "https://a8bc82dabd3b.ngrok.io/"; //change this
 const kParseMasterKey = "myMasterKey";

@@ -15,46 +15,7 @@ import 'package:http/http.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 
-void main() async {
-  // Parse().initialize(
-  //     kParseApplicationId,
-  //     kParseServerUrl,
-  //     masterKey: kParseMasterKey,
-  //     clientKey: kParseClientKey,
-  //     debug: true,
-  //     liveQueryUrl: kLiveQueryUrl,
-  //     //autoSendSessionId: true
-  // );
-  //
-  // var dietPlan = ParseObject('DietPlan')
-  //   ..set('Name', 'Ketogenic')
-  //   ..set('Fat', 65);
-  // await dietPlan.save();
-  //
-  // var response = await dietPlan.save();
-  // if (response.success) {
-  //   dietPlan = response.result;
-  // }
-  //
-  // final LiveQuery liveQuery = LiveQuery();
-  //
-  // QueryBuilder<ParseObject> query =
-  // QueryBuilder<ParseObject>(ParseObject('DietPlan'))
-  //   ..whereEqualTo('intNumber', 1);
-  //
-  // Subscription subscription = await liveQuery.client.subscribe(query);
-  //
-  // subscription.on(LiveQueryEvent.delete, (value) {
-  //   print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
-  //   print((value as ParseObject).objectId);
-  //   print((value as ParseObject).updatedAt);
-  //   print((value as ParseObject).createdAt);
-  //   print((value as ParseObject).get('objectId'));
-  //   print((value as ParseObject).get('updatedAt'));
-  //   print((value as ParseObject).get('createdAt'));
-  // });
-
-
+void main() async{
   runApp(MyApp());
 }
 
@@ -76,9 +37,12 @@ class _MyAppState extends State<MyApp> {
         home: Home()
     );
   }
+
+
 }
 
 class Home extends StatefulWidget {
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -97,7 +61,6 @@ class _HomeState extends State<Home> {
   int _selectedIndexBottomNavBar = 0;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
 
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -108,12 +71,6 @@ class _HomeState extends State<Home> {
         });},
         child: Scaffold(
             key: _scaffoldKey,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                invokeDatePicker();
-              },
-              child: Icon(Icons.add),
-            ),
             bottomNavigationBar: bottomNavigationBar(),
             appBar: AppBar(
               title: Text('Marca Horário'),
@@ -291,42 +248,54 @@ class _HomeState extends State<Home> {
   }
 
   Widget scheduleTile(){
-    return Padding(
-      padding: EdgeInsets.only(bottom: 80.0),
-      child: Card(
-        color: Colors.grey,
-        child: ListTile(
-          title: Text(_titleTile),
-          subtitle: Text(_tileSubtitle),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: standardIconColor,
-                  size: 20.0,
-                ),
-                onPressed: () {
-                  setState(() {
-                    employeeAvailable();
-                  });
-                },
+    return Card(
+      color: Colors.grey,
+      child: ListTile(
+        title: Text(_titleTile),
+        subtitle: Text(_tileSubtitle),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            IconButton(
+              tooltip: "Adicionar nome do funcionário",
+              icon: Icon(
+                Icons.edit,
+                color: standardIconColor,
+                size: 20.0,
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.check_circle_outline,
-                  color: _iconColor,
-                  size: 20.0,
-                ),
-                onPressed: () {
-                  setState(() {
-                    (_titleTile != standardTileTitle) ? confirmSchedule() : fillTimeDialog();
-                  });
-                },
-              )
-            ],
-          ),
+              onPressed: () {
+                setState(() {
+                  employeeAvailable();
+                });
+              },
+            ),
+            IconButton(
+              tooltip: "Adicionar horário disponível",
+              icon: Icon(
+                Icons.access_time,
+                color: standardIconColor,
+                size: 20.0,
+              ),
+              onPressed: () {
+                setState(() {
+                  invokeDatePicker();
+                });
+              },
+            ),
+            IconButton(
+              tooltip: "Confirmar disponibilidade do funcionário",
+              icon: Icon(
+                Icons.check_circle_outline,
+                color: _iconColor,
+                size: 20.0,
+              ),
+              onPressed: () {
+                setState(() {
+                  (_titleTile != standardTileTitle) ? confirmSchedule() : fillTimeDialog();
+                });
+              },
+            )
+          ],
         ),
       ),
     );
@@ -516,7 +485,7 @@ class _HomeState extends State<Home> {
 
   Future <List<Data>> getDataList() async{
 
-    List<Data> todoList = [];
+    List<Data> dataList = [];
 
     Response response = await DataUtils.getDataList();
     print("Code is ${response.statusCode}");
@@ -526,15 +495,15 @@ class _HomeState extends State<Home> {
       var body = json.decode(response.body);
       var results = body["results"];
 
-      for (var todo in results) {
-        todoList.add(Data.fromJson(todo));
+      for (var data in results) {
+        dataList.add(Data.fromJson(data));
       }
 
     } else {
       //Handle error
     }
 
-    return todoList;
+    return dataList;
   }
 }
 
