@@ -29,6 +29,7 @@ class DataUtils {
   static Future getDataList() async{
 
     String apiUrl = _baseUrl + "Data";
+    //String apiUrl = _baseUrl + classNameDB;
 
     Response response = await get(apiUrl, headers: {
       'X-Parse-Application-Id' : kParseApplicationId,
