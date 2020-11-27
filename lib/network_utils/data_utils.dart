@@ -10,8 +10,9 @@ class DataUtils {
   static final String _baseUrl = baseUrl;
 
   //CREATE
-  static Future<Response> addData(Data data) async {
-    String apiUrl = _baseUrl + "Data";
+  static Future<Response> addData(Data data, String classNameDB) async {
+    //String apiUrl = _baseUrl + "Data";
+    String apiUrl = _baseUrl + classNameDB;
 
     Response response = await post(apiUrl,
       headers: {
@@ -26,10 +27,10 @@ class DataUtils {
   }
 
   //READ
-  static Future getDataList() async{
+  static Future getDataList(String classNameDB) async{
 
-    String apiUrl = _baseUrl + "Data";
-    //String apiUrl = _baseUrl + classNameDB;
+    //String apiUrl = _baseUrl + "Data";
+    String apiUrl = _baseUrl + classNameDB;
 
     Response response = await get(apiUrl, headers: {
       'X-Parse-Application-Id' : kParseApplicationId,
@@ -40,9 +41,10 @@ class DataUtils {
   }
 
   //UPDATE
-  static Future updateData(Data data) async{
+  static Future updateData(Data data, String classNameDB) async{
 
-    String apiUrl = _baseUrl + "Data/${data.objectId}";
+    //String apiUrl = _baseUrl + "Data/${data.objectId}";
+    String apiUrl = _baseUrl + "$classNameDB/${data.objectId}";
 
     Response response = await put(apiUrl, headers: {
       'X-Parse-Application-Id' : kParseApplicationId,
@@ -56,9 +58,10 @@ class DataUtils {
   }
 
   //DELETE
-  static Future deleteData(String objectId) async{
+  static Future deleteData(String objectId, String classNameDB) async{
 
-    String apiUrl = _baseUrl + "Data/$objectId";
+    //String apiUrl = _baseUrl + "Data/$objectId";
+    String apiUrl = _baseUrl + "$classNameDB/$objectId";
 
     Response response = await delete(apiUrl, headers: {
       'X-Parse-Application-Id' : kParseApplicationId,

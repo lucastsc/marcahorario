@@ -14,6 +14,8 @@ import 'package:marca_horario/constants.dart';
 
 class Home extends StatefulWidget {
 
+  final classNameDB;
+  Home({Key key, @required this.classNameDB}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -469,7 +471,7 @@ class _HomeState extends State<Home> {
 
     Data data = Data(employee: _tileSubtitle, dateTime: _titleTile);
 
-    DataUtils.addData(data)
+    DataUtils.addData(data,widget.classNameDB)
         .then((res) {
 
       _scaffoldKey.currentState.hideCurrentSnackBar();
@@ -504,7 +506,7 @@ class _HomeState extends State<Home> {
     ),);
 
 
-    DataUtils.deleteData(objectId)
+    DataUtils.deleteData(objectId, widget.classNameDB)
         .then((res) {
 
       _scaffoldKey.currentState.hideCurrentSnackBar();
@@ -536,7 +538,7 @@ class _HomeState extends State<Home> {
     ),);
 
 
-    DataUtils.updateData(data)
+    DataUtils.updateData(data, widget.classNameDB)
         .then((res) {
 
       _scaffoldKey.currentState.hideCurrentSnackBar();
@@ -560,7 +562,7 @@ class _HomeState extends State<Home> {
 
     List<Data> dataList = [];
 
-    Response response = await DataUtils.getDataList();
+    Response response = await DataUtils.getDataList(widget.classNameDB);
     print("Code is ${response.statusCode}");
     print("Response is ${response.body}");
 

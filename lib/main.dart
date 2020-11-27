@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:marca_horario/screens/home.dart';
+import 'package:marca_horario/screens/login.dart';
 
 void main() async{
   runApp(MyApp());
@@ -32,7 +33,7 @@ class _MyAppState extends State<MyApp> {
           GlobalWidgetsLocalizations.delegate
         ],
         supportedLocales: [const Locale('pt', 'BR')],
-        home: Home()
+        home: LoginScreen()
     );
   }
 }

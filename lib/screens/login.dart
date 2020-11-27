@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marca_horario/main.dart';
+import 'package:marca_horario/screens/home.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
+import 'package:marca_horario/screens/home_client.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -13,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   TextEditingController _userController = TextEditingController();
   TextEditingController _passwordUserController = TextEditingController();
+  TextEditingController _userCompanyNameController = TextEditingController();
 
   TextEditingController _companyController = TextEditingController();
   TextEditingController _passwordCompanyController = TextEditingController();
@@ -130,10 +133,10 @@ class _LoginScreenState extends State<LoginScreen> {
               var response = await user.login();
               if (response.success) {
                 print(response.result);
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => MyApp()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home(classNameDB: _companyController.text)),
+                );
               }else{
                 print(response.error);
               }
@@ -149,6 +152,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       child: Column(
         children: [
+          TextField(
+            controller: _userCompanyNameController,
+            decoration: InputDecoration(
+                labelText: "Nome da empresa"
+            ),
+          ),
           TextField(
             controller: _userController,
             decoration: InputDecoration(
@@ -167,6 +176,10 @@ class _LoginScreenState extends State<LoginScreen> {
               var response = await user.login();
               if (response.success) {
                 print(response.result);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text)),
+                );
               }else{
                 print(response.error);
               }
