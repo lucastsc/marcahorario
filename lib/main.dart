@@ -154,12 +154,12 @@ class _HomeState extends State<Home> {
         child: Scaffold(
             key: _scaffoldKey,
             bottomNavigationBar: bottomNavigationBar(),
-            floatingActionButton: FloatingActionButton(
-              onPressed: (){
-                // var user =  ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com").create();
-                // var teste = ParseObject('Testando').create();
-              },
-            ),
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: (){
+            //     // var user =  ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com").create();
+            //     // var teste = ParseObject('Testando').create();
+            //   },
+            // ),
             appBar: AppBar(
               title: Text('Marca Horário'),
             ),
@@ -256,8 +256,8 @@ class _HomeState extends State<Home> {
                 itemBuilder: (_, position) {
                 return Card(
                   child: ListTile(
-                    title: Text(dataList[position].dateTime),
-                    subtitle: Text(dataList[position].employee),
+                    title: Text(dataList[position].dateTime == null ? "modificando...aguarde" : dataList[position].dateTime),
+                    subtitle: Text(dataList[position].employee == null ? "modificando...aguarde": dataList[position].employee),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
