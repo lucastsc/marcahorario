@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:marca_horario/screens/home.dart';
 import 'package:marca_horario/screens/login.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+
+import 'constants.dart';
 
 void main() async{
   runApp(MyApp());
@@ -16,14 +19,24 @@ void main() async{
 
 class MyApp extends StatefulWidget {
 
-  // String classNameDB;
-  // MyApp({Key key, @required this.classNameDB}) : super(key: key);
-
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    Parse().initialize(
+        kParseApplicationId,
+        kParseServerUrl,
+        clientKey: kParseClientKey,
+        masterKey: kParseMasterKey,
+        debug: true,
+        liveQueryUrl: kLiveQueryUrl,
+        autoSendSessionId: true);
+  }
 
   @override
   Widget build(BuildContext context) {

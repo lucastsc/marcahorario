@@ -23,19 +23,18 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _companyVisibility = false;
   bool _clientVisibility = false;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Parse().initialize(
-  //       kParseApplicationId,
-  //       kParseServerUrl,
-  //       clientKey: kParseClientKey,
-  //       masterKey: kParseMasterKey,
-  //       debug: true,
-  //       liveQueryUrl: kLiveQueryUrl,
-  //       autoSendSessionId: true);
-  // }
-
+  @override
+  void initState() {
+    super.initState();
+    Parse().initialize(
+        kParseApplicationId,
+        kParseServerUrl,
+        clientKey: kParseClientKey,
+        masterKey: kParseMasterKey,
+        debug: true,
+        liveQueryUrl: kLiveQueryUrl,
+        autoSendSessionId: true);
+  }
 
   @override
   Widget build(BuildContext context) {

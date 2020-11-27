@@ -53,7 +53,7 @@ class _HomeState extends State<Home> {
     final LiveQuery liveQuery = LiveQuery();
 
     QueryBuilder<ParseObject> query =
-    QueryBuilder<ParseObject>(ParseObject('Data'));
+    QueryBuilder<ParseObject>(ParseObject(widget.classNameDB));
     //..whereEqualTo('intNumber', 1);
 
     Subscription subscription = await liveQuery.client.subscribe(query);
