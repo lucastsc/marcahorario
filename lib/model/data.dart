@@ -12,22 +12,26 @@ class Data {
   String objectId;
   String dateTime;
   String employee;
+  String companyName;
 
   Data({
     this.objectId,
     this.dateTime,
     this.employee,
+    this.companyName,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     objectId: json["objectId"],
     dateTime: json["dateTime"],
     employee: json["employee"],
+    companyName: json["companyName"],
   );
 
   Map<String, dynamic> toJson() => {
     "objectId": objectId,
     "dateTime": dateTime,
     "employee": employee,
+    "companyName": companyName,
   };
 }

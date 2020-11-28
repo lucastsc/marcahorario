@@ -159,31 +159,35 @@ class _LoginScreenState extends State<LoginScreen> {
                 labelText: "Nome da empresa"
             ),
           ),
-          TextField(
-            controller: _userController,
-            decoration: InputDecoration(
-                labelText: "usuario"
-            ),
-          ),
-          TextField(
-            controller: _passwordUserController,
-            decoration: InputDecoration(
-                labelText: "senha"
-            ),
-          ),
+          // TextField(
+          //   controller: _userController,
+          //   decoration: InputDecoration(
+          //       labelText: "usuario"
+          //   ),
+          // ),
+          // TextField(
+          //   controller: _passwordUserController,
+          //   decoration: InputDecoration(
+          //       labelText: "senha"
+          //   ),
+          // ),
           FlatButton(
             onPressed: () async{
-              ParseUser user = ParseUser(_userController.text,_passwordUserController.text,"");
-              var response = await user.login();
-              if (response.success) {
-                print(response.result);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text)),
-                );
-              }else{
-                print(response.error);
-              }
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text)),
+                    );
+              // ParseUser user = ParseUser(_userController.text,_passwordUserController.text,"");
+              // var response = await user.login();
+              // if (response.success) {
+              //   print(response.result);
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text)),
+              //   );
+              // }else{
+              //   print(response.error);
+              // }
             },
             child: Text("Logar"),
           )

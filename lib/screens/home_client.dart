@@ -50,7 +50,7 @@ class _HomeClientState extends State<HomeClient> {
     final LiveQuery liveQuery = LiveQuery();
 
     QueryBuilder<ParseObject> query =
-    QueryBuilder<ParseObject>(ParseObject(widget.classNameDB));
+    QueryBuilder<ParseObject>(ParseObject("Data"));
 
     Subscription subscription = await liveQuery.client.subscribe(query);
 
@@ -119,12 +119,13 @@ class _HomeClientState extends State<HomeClient> {
       child: Scaffold(
           key: _scaffoldKey,
           //bottomNavigationBar: bottomNavigationBar(),
-          // floatingActionButton: FloatingActionButton(
-          //   onPressed: (){
-          //     // var user =  ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com").create();
-          //     // var teste = ParseObject('Testando').create();
-          //   },
-          // ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: (){
+              // var user =  ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com").create();
+              // var teste = ParseObject('Testando').create();
+              getDataList();
+            },
+          ),
           appBar: AppBar(
             title: Text('Marca Horário'),
           ),
@@ -150,9 +151,8 @@ class _HomeClientState extends State<HomeClient> {
         //gets available employees and datetimes from the server
         FutureBuilder(builder: (context,snapshot){
           if (snapshot.data != null) {
+            print("SNAPSHOT.DATA.TOSTRING(NOT NULL): " + snapshot.data.toString());
             List<Data> dataList = snapshot.data;
-
-            if(dataList.isNotEmpty){
               return Expanded(
                 child: ListView.builder(
                   itemBuilder: (_, position) {
@@ -182,15 +182,11 @@ class _HomeClientState extends State<HomeClient> {
                   itemCount: dataList.length,
                 ),
               );
-            }else{
-              return warningLoading();
-            }
-
-
 
           } else {
+            print("SNAPSHOT.DATA.TOSTRING(NULL): " + snapshot.data.toString());
             return Center(
-              child: CircularProgressIndicator(),
+              child: warningLoading(),
             );
           }
         },
@@ -214,27 +210,44 @@ class _HomeClientState extends State<HomeClient> {
     );
   }
 
-  Future <List<Data>> getDataList() async{
-
+  Future <List<Data>> getDataList() async {
     List<Data> dataList = [];
 
-    Response response = await DataUtils.getDataList(widget.classNameDB);
-    print("Code is ${response.statusCode}");
-    print("Response is ${response.body}");
+    //gets exclusively data relatively to widget.classnameDB
+    ParseResponse response = await DataUtils.getDataList(
+        "companyName", widget.classNameDB);
+    print("RESPONSE RESULTS: " + response.results.toString());
 
-    if (response.statusCode == 200) {
-      var body = json.decode(response.body);
-      var results = body["results"];
-
-      for (var data in results) {
-        dataList.add(Data.fromJson(data));
+    if (response.success) {
+      for (ParseObject parseObject in response.results) {
+        dataList.add(Data.fromJson(parseObject.toJson()));
+        print("DATA: " + parseObject.toString());
       }
-
     } else {
-      //Handle error
+      print(response.error);
     }
 
     return dataList;
-  }
 
+      // Response response = await DataUtils.getDataList(widget.classNameDB);
+      // //Response response = await DataUtils.getDataList("companyName",widget.classNameDB);
+      // print("Code is ${response.statusCode}");
+      // print("Response is ${response.body}");
+      //
+      // if (response.statusCode == 200) {
+      //   var body = json.decode(response.body);
+      //   var results = body["results"];
+      //   print("BODY: " + body.toString());
+      //   print("RESULTS: "+results.toString());
+      //   for (var data in results) {
+      //     dataList.add(Data.fromJson(data));
+      //   }
+      //
+      // } else {
+      //   //Handle error
+      // }
+      //
+      // return dataList;
+    }
 }
+

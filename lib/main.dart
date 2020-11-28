@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:marca_horario/screens/home.dart';
 import 'package:marca_horario/screens/login.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 

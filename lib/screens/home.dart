@@ -53,7 +53,7 @@ class _HomeState extends State<Home> {
     final LiveQuery liveQuery = LiveQuery();
 
     QueryBuilder<ParseObject> query =
-    QueryBuilder<ParseObject>(ParseObject(widget.classNameDB));
+    QueryBuilder<ParseObject>(ParseObject("Data"));
     //..whereEqualTo('intNumber', 1);
 
     Subscription subscription = await liveQuery.client.subscribe(query);
@@ -256,9 +256,10 @@ class _HomeState extends State<Home> {
             );
 
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return warningLoading();
+            // return Center(
+            //   child: CircularProgressIndicator(),
+            // );
           }
         },
           future: getDataList(),
@@ -268,6 +269,16 @@ class _HomeState extends State<Home> {
         ),
         scheduleTile()
       ],
+    );
+  }
+
+  Widget warningLoading(){
+    return Container(
+      child: Card(
+        child: ListTile(
+          title: Text("Não há disponibilidade de funcionários ainda.Adicione!"),
+        ),
+      ),
     );
   }
 
@@ -469,9 +480,9 @@ class _HomeState extends State<Home> {
       duration: Duration(minutes: 1),
     ));
 
-    Data data = Data(employee: _tileSubtitle, dateTime: _titleTile);
+    Data data = Data(employee: _tileSubtitle, dateTime: _titleTile, companyName: widget.classNameDB);
 
-    DataUtils.addData(data,widget.classNameDB)
+    DataUtils.addData(data)
         .then((res) {
 
       _scaffoldKey.currentState.hideCurrentSnackBar();
@@ -538,7 +549,7 @@ class _HomeState extends State<Home> {
     ),);
 
 
-    DataUtils.updateData(data, widget.classNameDB)
+    DataUtils.updateData(data)
         .then((res) {
 
       _scaffoldKey.currentState.hideCurrentSnackBar();
@@ -562,24 +573,40 @@ class _HomeState extends State<Home> {
 
     List<Data> dataList = [];
 
-    Response response = await DataUtils.getDataList(widget.classNameDB);
-    print("Code is ${response.statusCode}");
-    print("Response is ${response.body}");
+    ParseResponse response = await DataUtils.getDataList(
+        "companyName", widget.classNameDB);
+    print("RESPONSE RESULTS: " + response.results.toString());
 
-    if (response.statusCode == 200) {
-      var body = json.decode(response.body);
-      var results = body["results"];
-
-      for (var data in results) {
-        dataList.add(Data.fromJson(data));
+    if (response.success) {
+      for (ParseObject parseObject in response.results) {
+        dataList.add(Data.fromJson(parseObject.toJson()));
+        print("DATA: " + parseObject.toString());
       }
-
     } else {
-      //Handle error
+      print(response.error);
     }
 
     return dataList;
-  }
+
+    // Response response = await DataUtils.getDataList("companyName", widget.classNameDB);
+    // //Response response = await DataUtils.getDataList("companyName",widget.classNameDB);
+    // print("Code is ${response.statusCode}");
+    // print("Response is ${response.body}");
+    //
+    // if (response.statusCode == 200) {
+    //   var body = json.decode(response.body);
+    //   var results = body["results"];
+    //
+    //   for (var data in results) {
+    //     dataList.add(Data.fromJson(data));
+    //   }
+    //
+    // } else {
+    //   //Handle error
+    // }
+    //
+    // return dataList;
+   }
 
 
 }
