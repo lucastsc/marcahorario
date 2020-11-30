@@ -12,7 +12,8 @@ import 'package:marca_horario/constants.dart';
 class HomeClient extends StatefulWidget {
 
   final classNameDB;
-  HomeClient({Key key, @required this.classNameDB}) : super(key: key);
+  final username;
+  HomeClient({Key key, @required this.classNameDB, this.username}) : super(key: key);
 
   @override
   _HomeClientState createState() => _HomeClientState();
@@ -22,16 +23,6 @@ class _HomeClientState extends State<HomeClient> {
   String text = '';
 
   Future<void> initData() async {
-
-    // await Parse().initialize(
-    //   kParseApplicationId,
-    //   kParseServerUrl,
-    //   masterKey: kParseMasterKey,
-    //   clientKey: kParseClientKey,
-    //   debug: true,
-    //   liveQueryUrl: kLiveQueryUrl,
-    //   autoSendSessionId: true,
-    // );
 
     final ParseResponse response = await Parse().healthCheck();
 
@@ -107,6 +98,7 @@ class _HomeClientState extends State<HomeClient> {
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _selectedIndexBottomNavBar = 0;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  bool _clientCheckBox = false;
 
   @override
   Widget build(BuildContext context) {
@@ -163,17 +155,34 @@ class _HomeClientState extends State<HomeClient> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            IconButton(icon: Icon(Icons.edit), onPressed: () {
-                              //Show dialog box to update item
-                              //showUpdateDialog(dataList[position]);
-                            }),
-                            IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
+                            Checkbox(
+                              value: dataList[position].clientCheckBox,
+                              onChanged: (bool value){
+                                if(dataList[position].client  == widget.username || dataList[position].client == "nenhum"){
+                                  print("pode alterar marcacao, pois o usuario é: " + dataList[position].client.toString());
+                                  //if value goes to false, change the client ownership
+                                  value == false ? dataList[position].client = "nenhum" : dataList[position].client = widget.username;
+                                  dataList[position].clientCheckBox = value;
+                                  DataUtils.updateData(dataList[position]);
+                                }else{
+                                  print("nao pode alterar a marcacao, pois pertence a outra pessoa.Pertence a: " + dataList[position].client.toString());
+                                }
+                                setState(() {
+                                });
 
-                            }),
-                            //Show dialog box to delete item
-                            IconButton(icon: Icon(Icons.delete), onPressed: () {
-                              //deleteData(dataList[position].objectId);
-                            }),
+                              },
+                            )
+                            // IconButton(icon: Icon(Icons.edit), onPressed: () {
+                            //   //Show dialog box to update item
+                            //   //showUpdateDialog(dataList[position]);
+                            // }),
+                            // IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
+                            //
+                            // }),
+                            // //Show dialog box to delete item
+                            // IconButton(icon: Icon(Icons.delete), onPressed: () {
+                            //   //deleteData(dataList[position].objectId);
+                            // }),
                           ],
                         ),
                       ),

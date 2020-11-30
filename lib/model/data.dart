@@ -13,12 +13,16 @@ class Data {
   String dateTime;
   String employee;
   String companyName;
+  bool clientCheckBox;
+  String client;
 
   Data({
     this.objectId,
     this.dateTime,
     this.employee,
     this.companyName,
+    this.clientCheckBox,
+    this.client,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -26,6 +30,8 @@ class Data {
     dateTime: json["dateTime"],
     employee: json["employee"],
     companyName: json["companyName"],
+    clientCheckBox: json["clientCheckBox"],
+    client: json["client"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -33,5 +39,7 @@ class Data {
     "dateTime": dateTime,
     "employee": employee,
     "companyName": companyName,
+    "clientCheckBox": clientCheckBox,
+    "client": client,
   };
 }

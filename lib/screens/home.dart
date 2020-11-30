@@ -480,7 +480,7 @@ class _HomeState extends State<Home> {
       duration: Duration(minutes: 1),
     ));
 
-    Data data = Data(employee: _tileSubtitle, dateTime: _titleTile, companyName: widget.classNameDB);
+    Data data = Data(employee: _tileSubtitle, dateTime: _titleTile, companyName: widget.classNameDB, client: "nenhum",clientCheckBox: false);
 
     DataUtils.addData(data)
         .then((res) {
