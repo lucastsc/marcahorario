@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  url_launcher: ^5.7.10
   http: ^0.12.2
   parse_server_sdk_flutter: ^2.0.1
   intl: ^0.16.1

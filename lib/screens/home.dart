@@ -11,6 +11,7 @@ import 'package:marca_horario/screens/credentials.dart';
 import 'package:marca_horario/screens/login.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
 class Home extends StatefulWidget {
 
@@ -62,39 +63,39 @@ class _HomeState extends State<Home> {
       setState(() {
 
       });
-      print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
-      print((value as ParseObject).objectId);
-      print((value as ParseObject).updatedAt);
-      print((value as ParseObject).createdAt);
-      print((value as ParseObject).get('objectId'));
-      print((value as ParseObject).get('updatedAt'));
-      print((value as ParseObject).get('createdAt'));
+      // print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
+      // print((value as ParseObject).objectId);
+      // print((value as ParseObject).updatedAt);
+      // print((value as ParseObject).createdAt);
+      // print((value as ParseObject).get('objectId'));
+      // print((value as ParseObject).get('updatedAt'));
+      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.update, (value) {
       setState(() {
 
       });
-      print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
-      print((value as ParseObject).objectId);
-      print((value as ParseObject).updatedAt);
-      print((value as ParseObject).createdAt);
-      print((value as ParseObject).get('objectId'));
-      print((value as ParseObject).get('updatedAt'));
-      print((value as ParseObject).get('createdAt'));
+      // print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
+      // print((value as ParseObject).objectId);
+      // print((value as ParseObject).updatedAt);
+      // print((value as ParseObject).createdAt);
+      // print((value as ParseObject).get('objectId'));
+      // print((value as ParseObject).get('updatedAt'));
+      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.delete, (value) {
       setState(() {
 
       });
-      print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
-      print((value as ParseObject).objectId);
-      print((value as ParseObject).updatedAt);
-      print((value as ParseObject).createdAt);
-      print((value as ParseObject).get('objectId'));
-      print((value as ParseObject).get('updatedAt'));
-      print((value as ParseObject).get('createdAt'));
+      // print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
+      // print((value as ParseObject).objectId);
+      // print((value as ParseObject).updatedAt);
+      // print((value as ParseObject).createdAt);
+      // print((value as ParseObject).get('objectId'));
+      // print((value as ParseObject).get('updatedAt'));
+      // print((value as ParseObject).get('createdAt'));
     });
   }
 
@@ -303,9 +304,12 @@ class _HomeState extends State<Home> {
                         //Show dialog box to update item
                         showUpdateDialog(dataList[position]);
                       }),
-                      IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
+                      // IconButton(
+                      //     icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
+                      //
+                      // }),
+                        dataList[position].clientCheckBox == true ? Icon(Icons.check_circle, color: Colors.green,) : Icon(Icons.check_circle, color: Colors.grey,),
 
-                      }),
                       //Show dialog box to delete item
                       IconButton(icon: Icon(Icons.delete), onPressed: () {
                         deleteData(dataList[position].objectId);
@@ -328,7 +332,21 @@ class _HomeState extends State<Home> {
             children: [
               Padding(padding: EdgeInsets.only(left: 16.0),),
               Flexible(
-                child: Text("Cliente: " + dataList[position].client),
+                child: dataList[position].client != "nenhum" ? Text("Cliente: " + dataList[position].client, style: TextStyle(fontWeight: FontWeight.bold)) : Text("Cliente: " + dataList[position].client)
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Padding(padding: EdgeInsets.only(left: 16.0),),
+              IconButton(
+                icon: Icon(Icons.phone),
+                onPressed: (){
+
+                  String phoneNumber = dataList[position].clientPhone;
+                  phoneNumber != null ?  UrlLauncher.launch("tel://$phoneNumber") : _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Não há telefone!"), duration: Duration(seconds: 1),)) ;
+
+                },
               )
             ],
           ),

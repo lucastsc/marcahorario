@@ -182,6 +182,7 @@ class _HomeClientState extends State<HomeClient> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Checkbox(
+                        activeColor: dataList[position].client == widget.username ? Colors.green : Colors.red,
                         value: dataList[position].clientCheckBox,
                         onChanged: (bool value) async {
                           if(dataList[position].client  == widget.username || dataList[position].client == "nenhum"){
@@ -235,7 +236,7 @@ class _HomeClientState extends State<HomeClient> {
               Padding(padding: EdgeInsets.only(left: 16.0),),
               Flexible(
                 child: widget.username == dataList[position].client ? Text("Cliente: " + dataList[position].client,style: TextStyle(fontWeight: FontWeight.bold),) : Text("Cliente: " + dataList[position].client ),
-              )
+              ),
             ],
           ),
         ],

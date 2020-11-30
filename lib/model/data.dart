@@ -15,6 +15,7 @@ class Data {
   String companyName;
   bool clientCheckBox;
   String client;
+  String clientPhone;
 
   Data({
     this.objectId,
@@ -23,6 +24,7 @@ class Data {
     this.companyName,
     this.clientCheckBox,
     this.client,
+    this.clientPhone,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -32,6 +34,7 @@ class Data {
     companyName: json["companyName"],
     clientCheckBox: json["clientCheckBox"],
     client: json["client"],
+    clientPhone: json["clientPhone"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -41,5 +44,6 @@ class Data {
     "companyName": companyName,
     "clientCheckBox": clientCheckBox,
     "client": client,
+    "clientPhone": clientPhone,
   };
 }
