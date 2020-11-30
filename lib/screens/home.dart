@@ -228,28 +228,43 @@ class _HomeState extends State<Home> {
             return Expanded(
               child: ListView.builder(
                 itemBuilder: (_, position) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(dataList[position].dateTime == null ? "modificando...aguarde" : dataList[position].dateTime),
-                      subtitle: Text(dataList[position].employee == null ? "modificando...aguarde": dataList[position].employee),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          IconButton(icon: Icon(Icons.edit), onPressed: () {
-                            //Show dialog box to update item
-                            showUpdateDialog(dataList[position]);
-                          }),
-                          IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
-
-                          }),
-                          //Show dialog box to delete item
-                          IconButton(icon: Icon(Icons.delete), onPressed: () {
-                            deleteData(dataList[position].objectId);
-                          }),
-                        ],
-                      ),
-                    ),
-                  );
+                  return frontCards(dataList, position);
+                  // return Card(
+                  //   child: ListTile(
+                  //     title: Text(dataList[position].dateTime == null ? "modificando...aguarde" : dataList[position].dateTime),
+                  //     subtitle: Container(
+                  //       child: Column(
+                  //         children: [
+                  //           Row(
+                  //             children: [
+                  //               Text("Funcionário disponível: "),
+                  //               Text(dataList[position].employee == null ? "modificando...aguarde": dataList[position].employee),
+                  //             ],
+                  //           ),
+                  //           Text("Cliente agendado: "),
+                  //           Text(dataList[position].client == null ? "modificando...aguarde": dataList[position].client),
+                  //
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     trailing: Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: <Widget>[
+                  //         IconButton(icon: Icon(Icons.edit), onPressed: () {
+                  //           //Show dialog box to update item
+                  //           showUpdateDialog(dataList[position]);
+                  //         }),
+                  //         IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
+                  //
+                  //         }),
+                  //         //Show dialog box to delete item
+                  //         IconButton(icon: Icon(Icons.delete), onPressed: () {
+                  //           deleteData(dataList[position].objectId);
+                  //         }),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // );
                 },
                 itemCount: dataList.length,
               ),
@@ -269,6 +284,56 @@ class _HomeState extends State<Home> {
         ),
         scheduleTile()
       ],
+    );
+  }
+
+  Widget frontCards(List<Data> dataList, int position){
+    return Card(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ListTile(
+                  title: Text(dataList[position].dateTime == null ? "modificando...aguarde" : dataList[position].dateTime),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      IconButton(icon: Icon(Icons.edit), onPressed: () {
+                        //Show dialog box to update item
+                        showUpdateDialog(dataList[position]);
+                      }),
+                      IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
+
+                      }),
+                      //Show dialog box to delete item
+                      IconButton(icon: Icon(Icons.delete), onPressed: () {
+                        deleteData(dataList[position].objectId);
+                      }),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              Padding(padding: EdgeInsets.only(left: 16.0),),
+              Flexible(
+                child: Text("Funcionário: " + dataList[position].employee),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              Padding(padding: EdgeInsets.only(left: 16.0),),
+              Flexible(
+                child: Text("Cliente: " + dataList[position].client),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -421,7 +486,7 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
               //addTodo();
               setState(() {
-                _tileSubtitle = "Disponível: " + _nameController.text;
+                _tileSubtitle = _nameController.text;
               });
 
             }, child: Text("Inserir")),
@@ -451,7 +516,7 @@ class _HomeState extends State<Home> {
               addData();
               setState(() {
                 _iconColor = alternateIconColor;
-                _tileSubtitle = "Disponível: " + _nameController.text;
+                _tileSubtitle = _nameController.text;
               });
 
             }, child: Text("Confirma")),
