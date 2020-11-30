@@ -49,39 +49,39 @@ class _HomeClientState extends State<HomeClient> {
       setState(() {
 
       });
-      print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
-      print((value as ParseObject).objectId);
-      print((value as ParseObject).updatedAt);
-      print((value as ParseObject).createdAt);
-      print((value as ParseObject).get('objectId'));
-      print((value as ParseObject).get('updatedAt'));
-      print((value as ParseObject).get('createdAt'));
+      // print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
+      // print((value as ParseObject).objectId);
+      // print((value as ParseObject).updatedAt);
+      // print((value as ParseObject).createdAt);
+      // print((value as ParseObject).get('objectId'));
+      // print((value as ParseObject).get('updatedAt'));
+      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.update, (value) {
       setState(() {
 
       });
-      print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
-      print((value as ParseObject).objectId);
-      print((value as ParseObject).updatedAt);
-      print((value as ParseObject).createdAt);
-      print((value as ParseObject).get('objectId'));
-      print((value as ParseObject).get('updatedAt'));
-      print((value as ParseObject).get('createdAt'));
+      // print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
+      // print((value as ParseObject).objectId);
+      // print((value as ParseObject).updatedAt);
+      // print((value as ParseObject).createdAt);
+      // print((value as ParseObject).get('objectId'));
+      // print((value as ParseObject).get('updatedAt'));
+      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.delete, (value) {
       setState(() {
 
       });
-      print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
-      print((value as ParseObject).objectId);
-      print((value as ParseObject).updatedAt);
-      print((value as ParseObject).createdAt);
-      print((value as ParseObject).get('objectId'));
-      print((value as ParseObject).get('updatedAt'));
-      print((value as ParseObject).get('createdAt'));
+      // print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
+      // print((value as ParseObject).objectId);
+      // print((value as ParseObject).updatedAt);
+      // print((value as ParseObject).createdAt);
+      // print((value as ParseObject).get('objectId'));
+      // print((value as ParseObject).get('updatedAt'));
+      // print((value as ParseObject).get('createdAt'));
     });
   }
 
@@ -143,7 +143,6 @@ class _HomeClientState extends State<HomeClient> {
         //gets available employees and datetimes from the server
         FutureBuilder(builder: (context,snapshot){
           if (snapshot.data != null) {
-            print("SNAPSHOT.DATA.TOSTRING(NOT NULL): " + snapshot.data.toString());
             List<Data> dataList = snapshot.data;
               return Expanded(
                 child: ListView.builder(
@@ -155,7 +154,6 @@ class _HomeClientState extends State<HomeClient> {
               );
 
           } else {
-            print("SNAPSHOT.DATA.TOSTRING(NULL): " + snapshot.data.toString());
             return Center(
               child: warningLoading(),
             );
@@ -185,15 +183,33 @@ class _HomeClientState extends State<HomeClient> {
                     children: <Widget>[
                       Checkbox(
                         value: dataList[position].clientCheckBox,
-                        onChanged: (bool value){
+                        onChanged: (bool value) async {
                           if(dataList[position].client  == widget.username || dataList[position].client == "nenhum"){
-                            print("pode alterar marcacao, pois o usuario é: " + dataList[position].client.toString());
-                            //if value goes to false, change the client ownership
-                            value == false ? dataList[position].client = "nenhum" : dataList[position].client = widget.username;
-                            dataList[position].clientCheckBox = value;
-                            DataUtils.updateData(dataList[position]);
+
+                            var countClientSchedules = await DataUtils.verifyClientAlreadyScheduled("client", widget.username);
+
+                            //if user have not scheduled yet
+                            if(countClientSchedules == 0){
+                              //if value goes to false, change the client ownership
+                              value == false ? dataList[position].client = "nenhum" : dataList[position].client = widget.username;
+                              dataList[position].clientCheckBox = value;
+                              DataUtils.updateData(dataList[position]);
+                            }
+
+                            //if user have already scheduled
+                            if(countClientSchedules == 1){
+                              if(dataList[position].client  == widget.username){
+                                //if value goes to false, change the client ownership
+                                value == false ? dataList[position].client = "nenhum" : dataList[position].client = widget.username;
+                                dataList[position].clientCheckBox = value;
+                                DataUtils.updateData(dataList[position]);
+                              }else{
+                                _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Você já tem horário marcado!"), duration: Duration(milliseconds: 1500),));
+                              }
+                            }
+
                           }else{
-                            print("nao pode alterar a marcacao, pois pertence a outra pessoa.Pertence a: " + dataList[position].client.toString());
+                            _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Você não pode alterar a marcação de outra pessoa.Tente outro horário!"), duration: Duration(milliseconds: 1500),));
                           }
                           setState(() {
                           });
@@ -218,7 +234,7 @@ class _HomeClientState extends State<HomeClient> {
             children: [
               Padding(padding: EdgeInsets.only(left: 16.0),),
               Flexible(
-                child: Text("Cliente: " + dataList[position].client),
+                child: widget.username == dataList[position].client ? Text("Cliente: " + dataList[position].client,style: TextStyle(fontWeight: FontWeight.bold),) : Text("Cliente: " + dataList[position].client ),
               )
             ],
           ),
@@ -243,12 +259,10 @@ class _HomeClientState extends State<HomeClient> {
     //gets exclusively data relatively to widget.classnameDB
     ParseResponse response = await DataUtils.getDataList(
         "companyName", widget.classNameDB);
-    print("RESPONSE RESULTS: " + response.results.toString());
 
     if (response.success) {
       for (ParseObject parseObject in response.results) {
         dataList.add(Data.fromJson(parseObject.toJson()));
-        print("DATA: " + parseObject.toString());
       }
     } else {
       print(response.error);

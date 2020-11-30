@@ -53,6 +53,15 @@ class DataUtils {
     return apiResponse;
   }
 
+  static Future verifyClientAlreadyScheduled(String colName, String username) async{
+    QueryBuilder<ParseObject> queryUserName =
+    QueryBuilder<ParseObject>(ParseObject("Data"))
+      ..whereEqualTo(colName, username);
+
+    ParseResponse apiResponse = await queryUserName.query();
+    return apiResponse.count;
+  }
+
   //UPDATE
   static Future updateData(Data data) async{
 
