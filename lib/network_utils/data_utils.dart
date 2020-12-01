@@ -62,6 +62,16 @@ class DataUtils {
     return apiResponse.count;
   }
 
+  static Future verifyCompanyExists(String colName, String companyName) async{
+    QueryBuilder<ParseObject> queryCompanyName =
+    QueryBuilder<ParseObject>(ParseObject("Data"))
+      ..whereEqualTo(colName, companyName);
+
+    ParseResponse apiResponse = await queryCompanyName.query();
+    bool exists = apiResponse.count >= 1 ? true : false;
+    return exists;
+  }
+
   //UPDATE
   static Future updateData(Data data) async{
 

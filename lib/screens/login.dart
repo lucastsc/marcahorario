@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marca_horario/main.dart';
+import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:marca_horario/screens/home.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+//import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 import 'package:marca_horario/screens/home_client.dart';
 
@@ -23,19 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _companyVisibility = false;
   bool _clientVisibility = false;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Parse().initialize(
-  //       kParseApplicationId,
-  //       kParseServerUrl,
-  //       clientKey: kParseClientKey,
-  //       masterKey: kParseMasterKey,
-  //       debug: true,
-  //       liveQueryUrl: kLiveQueryUrl,
-  //       autoSendSessionId: true);
-  // }
-
+  //var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         },
       ),
-      body: Container(
-        child: showBody(),
+      body: Scaffold(
+        body: showBody(),
       ),
     );
   }
@@ -132,14 +122,16 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () async{
               ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,"");
               var response = await user.login();
+
+              //verify of user login was successfull
               if (response.success) {
-                print(response.result);
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Home(classNameDB: _companyController.text)),
                 );
               }else{
-                print(response.error);
+                snackBarLoginParseResponseError(context, response);
               }
             },
             child: Text("Logar"),
@@ -151,50 +143,74 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget clientFields(){
     return Container(
-      child: Column(
-        children: [
-          TextField(
-            controller: _userCompanyNameController,
-            decoration: InputDecoration(
-                labelText: "Nome da empresa"
-            ),
-          ),
-          TextField(
-            controller: _userController,
-            decoration: InputDecoration(
-                labelText: "usuario"
-            ),
-          ),
-          TextField(
-            controller: _passwordUserController,
-            decoration: InputDecoration(
-                labelText: "senha"
-            ),
-          ),
-          FlatButton(
+      //wrap into a builder to make scaffold work
+      child: Builder(
+        builder: (context){
+          return Column(
+            children: [
+              TextField(
+                controller: _userCompanyNameController,
+                decoration: InputDecoration(
+                    labelText: "Nome da empresa"
+                ),
+              ),
+              TextField(
+                controller: _userController,
+                decoration: InputDecoration(
+                    labelText: "usuario"
+                ),
+              ),
+              TextField(
+                controller: _passwordUserController,
+                decoration: InputDecoration(
+                    labelText: "senha"
+                ),
+              ),
+              FlatButton(
 
-            onPressed: () async{
-              // Navigator.push(
-              //         context,
-              //         MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text)),
-              //       );
-              ParseUser user = ParseUser(_userController.text,_passwordUserController.text,"");
-              var response = await user.login();
-              if (response.success) {
-                print("sucesso login");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text,username: _userController.text,)),
-                );
-              }else{
-                print(response.error);
-              }
-            },
-            child: Text("Logar"),
-          )
-        ],
-      ),
+                onPressed: () async{
+
+                  ParseUser user = ParseUser(_userController.text,_passwordUserController.text,"");
+                  var response = await user.login();
+
+                  //verify of user login was successfull
+                  if (response.success) {
+
+                    //verify if company name exists
+                    if(await DataUtils.verifyCompanyExists("companyName", _userCompanyNameController.text)){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text,username: _userController.text,)),
+                      );
+                    }else{
+                      snackBarCompanyNameParseResponseError(context);
+                    }
+
+                  }else{
+                    snackBarLoginParseResponseError(context, response);
+                  }
+                },
+                child: Text("Logar"),
+              )
+            ],
+          );
+        },
+      )
     );
+  }
+
+  Widget snackBarLoginParseResponseError(BuildContext context, ParseResponse response){
+    String answer = response.error.type != null ? "Erro no login: " + response.error.type : "Erro no login. Motivo desconhecido.";
+    final snackBar = SnackBar(content: Text(answer));
+    Scaffold.of(context).showSnackBar(snackBar);
+
+  }
+
+  Widget snackBarCompanyNameParseResponseError(BuildContext context){
+    String answer = "Essa empresa ainda não existe.";
+    final snackBar = SnackBar(content: Text(answer));
+    Scaffold.of(context).showSnackBar(snackBar);
+
   }
 
 }

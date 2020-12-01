@@ -289,6 +289,8 @@ class _HomeState extends State<Home> {
   }
 
   Widget frontCards(List<Data> dataList, int position){
+    String phoneNumber = dataList[position].clientPhone;
+
     return Card(
       child: Column(
         children: [
@@ -339,19 +341,21 @@ class _HomeState extends State<Home> {
           Row(
             children: [
               Padding(padding: EdgeInsets.only(left: 16.0),),
-              IconButton(
-                icon: Icon(Icons.phone),
-                onPressed: (){
 
-                  String phoneNumber = dataList[position].clientPhone;
-                  phoneNumber != null ?  UrlLauncher.launch("tel://$phoneNumber") : _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Não há telefone!"), duration: Duration(seconds: 1),)) ;
-
-                },
-              )
+              (phoneNumber != null && phoneNumber != "") ? iconPhoneButton(phoneNumber) :  Visibility(child: iconPhoneButton(phoneNumber),visible: false),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget iconPhoneButton(String phoneNumber){
+    return IconButton(
+      icon: Icon(Icons.phone),
+      onPressed: (){
+        phoneNumber != null ?  UrlLauncher.launch("tel://$phoneNumber") : _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Não há telefone!"), duration: Duration(seconds: 1),)) ;
+      },
     );
   }
 
