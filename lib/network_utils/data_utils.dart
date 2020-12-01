@@ -72,6 +72,17 @@ class DataUtils {
     return exists;
   }
 
+  static Future verifyUserIsCompany(String companyName) async{
+    QueryBuilder<ParseObject> queryCompanyName =
+    QueryBuilder<ParseObject>(ParseObject("_User"))
+      ..whereEqualTo("username", companyName)
+      ..whereEqualTo("isCompany", true);
+
+    ParseResponse apiResponse = await queryCompanyName.query();
+    bool exists = apiResponse.count != 0 ? true : false;
+    return exists;
+  }
+
   //UPDATE
   static Future updateData(Data data) async{
 

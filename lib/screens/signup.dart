@@ -1,46 +1,36 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marca_horario/main.dart';
+import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:marca_horario/screens/home.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 import 'package:marca_horario/screens/home_client.dart';
+import 'package:marca_horario/screens/login.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignupScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-
+class _SignupScreenState extends State<SignupScreen> {
   TextEditingController _userController = TextEditingController();
   TextEditingController _passwordUserController = TextEditingController();
   TextEditingController _userCompanyNameController = TextEditingController();
 
   TextEditingController _companyController = TextEditingController();
   TextEditingController _passwordCompanyController = TextEditingController();
+  TextEditingController _emailCompanyController = TextEditingController();
 
   bool _companyVisibility = false;
   bool _clientVisibility = false;
 
   @override
-  void initState() {
-    super.initState();
-    Parse().initialize(
-        kParseApplicationId,
-        kParseServerUrl,
-        clientKey: kParseClientKey,
-        masterKey: kParseMasterKey,
-        debug: true,
-        liveQueryUrl: kLiveQueryUrl,
-        autoSendSessionId: true);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Cadastro'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
@@ -112,39 +102,60 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget companyFields(){
-    return Container(
-      child: Column(
-        children: [
-          TextField(
-            controller: _companyController,
-            decoration: InputDecoration(
-                labelText: "usuario"
-            ),
+    return Builder(
+      builder: (context){
+        return Container(
+          child: Column(
+            children: [
+              TextField(
+                controller: _companyController,
+                decoration: InputDecoration(
+                    labelText: "Nome da empresa (sem espaços)"
+                ),
+              ),
+              TextField(
+                controller: _passwordCompanyController,
+                decoration: InputDecoration(
+                    labelText: "Senha"
+                ),
+              ),
+              TextField(
+                controller: _emailCompanyController,
+                decoration: InputDecoration(
+                    labelText: "Email"
+                ),
+              ),
+              FlatButton(
+                onPressed: () async{
+
+                  ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,_emailCompanyController.text)
+                    ..set("isCompany", true);
+
+
+                  if(await DataUtils.verifyUserIsCompany(_companyController.text)){
+                    snackBarCustomError(context, "Essa empresa já existe!Tente outro nome.");
+                  }else{
+                    var response = await user.save();
+                    if (response.success) {
+                      print("CRIACAO EMPRESA: " + response.result.toString());
+                      print(response.result);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                      );
+                    }else{
+                      print(response.error);
+                      snackBarCustomError(context, "Erro: " + response.error.type);
+                    }
+                  }
+
+                },
+                child: Text("Cadastrar"),
+              )
+            ],
           ),
-          TextField(
-            controller: _passwordCompanyController,
-            decoration: InputDecoration(
-                labelText: "senha"
-            ),
-          ),
-          FlatButton(
-            onPressed: () async{
-              ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,"");
-              var response = await user.login();
-              if (response.success) {
-                print(response.result);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Home(classNameDB: _companyController.text)),
-                );
-              }else{
-                print(response.error);
-              }
-            },
-            child: Text("Logar"),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -161,37 +172,46 @@ class _LoginScreenState extends State<LoginScreen> {
           TextField(
             controller: _userController,
             decoration: InputDecoration(
-                labelText: "usuario"
+                labelText: "Usuário"
             ),
           ),
           TextField(
             controller: _passwordUserController,
             decoration: InputDecoration(
-                labelText: "senha"
+                labelText: "Senha"
             ),
           ),
           FlatButton(
             onPressed: () async{
-              ParseUser user = ParseUser(_userController.text,_passwordUserController.text,"");
-              var response = await user.login();
+              ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,"")
+                ..set("isCompany", false);
+
+              var response = await user.save();
               if (response.success) {
-                print(response.result);
+                print("CRIACAO USUARIO: " + response.result.toString());
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text)),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               }else{
                 print(response.error);
               }
             },
-            child: Text("Logar"),
+            child: Text("Cadastrar"),
           )
         ],
       ),
     );
   }
 
+  Widget snackBarCustomError(BuildContext context, String text){
+    String answer = text;
+    final snackBar = SnackBar(content: Text(answer));
+    Scaffold.of(context).showSnackBar(snackBar);
+
+  }
 }
+
 
 
 

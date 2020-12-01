@@ -7,6 +7,7 @@ import 'package:marca_horario/screens/home.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 import 'package:marca_horario/screens/home_client.dart';
+import 'package:marca_horario/network_utils/data_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -104,40 +105,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget companyFields(){
     return Container(
-      child: Column(
-        children: [
-          TextField(
-            controller: _companyController,
-            decoration: InputDecoration(
-                labelText: "usuario"
-            ),
-          ),
-          TextField(
-            controller: _passwordCompanyController,
-            decoration: InputDecoration(
-                labelText: "senha"
-            ),
-          ),
-          FlatButton(
-            onPressed: () async{
-              ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,"");
-              var response = await user.login();
+      child: Builder(
+        builder: (context){
+          return Column(
+            children: [
+              TextField(
+                controller: _companyController,
+                decoration: InputDecoration(
+                    labelText: "Login da empresa"
+                ),
+              ),
+              TextField(
+                controller: _passwordCompanyController,
+                decoration: InputDecoration(
+                    labelText: "senha"
+                ),
+              ),
+              FlatButton(
+                onPressed: () async{
+                  ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,"");
+                  var response = await user.login();
 
-              //verify of user login was successfull
-              if (response.success) {
+                  //verify of user login was successfull
+                  if (response.success) {
+                    //verify if is a company name or a user
+                    if(await DataUtils.verifyUserIsCompany(_companyController.text)){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Home(classNameDB: _companyController.text)),
+                      );
+                    }else{
+                      snackBarCustomError(context, "Não é uma empresa");
+                    }
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Home(classNameDB: _companyController.text)),
-                );
-              }else{
-                snackBarLoginParseResponseError(context, response);
-              }
-            },
-            child: Text("Logar"),
-          )
-        ],
-      ),
+                  }else{
+                    snackBarLoginParseResponseError(context, response);
+                  }
+                },
+                child: Text("Logar"),
+              )
+            ],
+          );
+        },
+      )
     );
   }
 
@@ -157,38 +167,44 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _userController,
                 decoration: InputDecoration(
-                    labelText: "usuario"
+                    labelText: "Usuário"
                 ),
               ),
               TextField(
                 controller: _passwordUserController,
                 decoration: InputDecoration(
-                    labelText: "senha"
+                    labelText: "Senha"
                 ),
               ),
               FlatButton(
 
                 onPressed: () async{
 
-                  ParseUser user = ParseUser(_userController.text,_passwordUserController.text,"");
-                  var response = await user.login();
-
-                  //verify of user login was successfull
-                  if (response.success) {
-
-                    //verify if company name exists
-                    if(await DataUtils.verifyCompanyExists("companyName", _userCompanyNameController.text)){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text,username: _userController.text,)),
-                      );
-                    }else{
-                      snackBarCompanyNameParseResponseError(context);
-                    }
-
+                  if(await DataUtils.verifyUserIsCompany(_userController.text)){
+                    snackBarCustomError(context, "Não é nome de usuário");
                   }else{
-                    snackBarLoginParseResponseError(context, response);
+                    ParseUser user = ParseUser(_userController.text,_passwordUserController.text,"");
+                    var response = await user.login();
+
+                    //verify of user login was successfull
+                    if (response.success) {
+
+                      //verify if company name exists
+                      if(await DataUtils.verifyCompanyExists("companyName", _userCompanyNameController.text)){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text,username: _userController.text,)),
+                        );
+                      }else{
+                        snackBarCustomError(context, "Essa empresa não existe ainda.");
+                      }
+
+                    }else{
+                      snackBarLoginParseResponseError(context, response);
+                    }
                   }
+
+
                 },
                 child: Text("Logar"),
               )
@@ -206,12 +222,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   }
 
-  Widget snackBarCompanyNameParseResponseError(BuildContext context){
-    String answer = "Essa empresa ainda não existe.";
+  Widget snackBarCustomError(BuildContext context, String text){
+    String answer = text;
     final snackBar = SnackBar(content: Text(answer));
     Scaffold.of(context).showSnackBar(snackBar);
 
   }
+
 
 }
 
