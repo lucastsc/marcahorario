@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:marca_horario/misc/general_functions.dart';
 import 'package:marca_horario/model/data.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:http/http.dart';
@@ -122,7 +123,7 @@ class _HomeCompanyState extends State<HomeCompany> {
         FutureBuilder(builder: (context,snapshot){
           if (snapshot.data != null) {
             List<Data> dataList = snapshot.data;
-
+            sortDataListByDateTime(dataList);
             return Expanded(
               child: ListView.builder(
                 itemBuilder: (_, position) {
