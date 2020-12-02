@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:marca_horario/misc/general_functions.dart';
 import 'package:marca_horario/model/data.dart';
+import 'package:marca_horario/model/user.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:http/http.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -164,13 +165,21 @@ class _HomeClientState extends State<HomeClient> {
                           if(dataList[position].client  == widget.username || dataList[position].client == "nenhum"){ //todo:change the name "nenhum" by a variable called "blank client"
                             //returns how many schedules the client made
                             var countClientSchedules = await DataUtils.verifyClientAlreadyScheduled("client", widget.username);
+
                             //if user have not scheduled yet
                             if(countClientSchedules == 0){
                               //if value goes to false, change the client ownership and updates data in the database
                               value == false ? dataList[position].client = "nenhum" : dataList[position].client = widget.username;
                               dataList[position].clientCheckBox = value;
+
+                              //retrieve information about the logged user (specifically the phone number)
+                              Future<List<User>> response = getUser(widget.username);
+                              List<User> userList = await response;
+                              dataList[position].clientPhone = userList.first.phone;
+
                               DataUtils.updateData(dataList[position]);
                             }
+
                             //if user have already scheduled
                             if(countClientSchedules == 1){
                               if(dataList[position].client  == widget.username){
@@ -245,6 +254,28 @@ class _HomeClientState extends State<HomeClient> {
 
     return dataList;
   }
+
+  Future<List<User>> getUser(String name) async {
+    List<User> userList = [];
+    //User user;
+    //gets exclusively data relatively to widget.classnameDB
+    ParseResponse response = await DataUtils.getUser(
+        "username", name);
+    if (response.success) {
+      print("RESULTAAAAAAAADO: " + response.result.toString());
+      for (ParseObject parseObject in response.results) {
+        userList.add(User.fromJson(parseObject.toJson()));
+      }
+      // ParseObject parseObject = response.result;
+      // user = User.fromJson(parseObject.toJson());
+    } else {
+      print(response.error);
+    }
+
+    return userList;
+  }
+
+
 
 
 }

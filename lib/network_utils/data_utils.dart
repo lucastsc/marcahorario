@@ -43,10 +43,21 @@ class DataUtils {
   //Using exclusively parse library for getting data from "Data" class in the Parse Server
   static Future getDataList(String colname, String classNameDB) async{
 
-
     QueryBuilder<ParseObject> queryColname =
     QueryBuilder<ParseObject>(ParseObject("Data"))
       ..whereEqualTo(colname, classNameDB);
+
+    ParseResponse apiResponse = await queryColname.query();
+
+    return apiResponse;
+  }
+
+  //Using exclusively parse library for getting user from "User" class in the Parse Server
+  static Future getUser(String colname, String name) async{
+
+    QueryBuilder<ParseObject> queryColname =
+    QueryBuilder<ParseObject>(ParseObject("_User"))
+      ..whereEqualTo(colname, name);
 
     ParseResponse apiResponse = await queryColname.query();
 
@@ -115,5 +126,7 @@ class DataUtils {
     bool exists = apiResponse.count != 0 ? true : false;
     return exists;
   }
+
+
 
 }
