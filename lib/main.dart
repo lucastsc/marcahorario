@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:marca_horario/screens/home_page.dart';
 import 'package:marca_horario/screens/login.dart';
 import 'package:marca_horario/screens/signup.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -46,7 +47,7 @@ class _MyAppState extends State<MyApp> {
           GlobalWidgetsLocalizations.delegate
         ],
         supportedLocales: [const Locale('pt', 'BR')],
-        home: SignupScreen()
+        home: HomePage()
     );
   }
 }

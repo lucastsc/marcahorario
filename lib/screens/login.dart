@@ -34,11 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text('Login'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async{
-
-        },
-      ),
       body: Scaffold(
         body: showBody(),
       ),
