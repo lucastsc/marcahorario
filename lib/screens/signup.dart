@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marca_horario/main.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
-import 'package:marca_horario/screens/home.dart';
+import 'package:marca_horario/screens/home_company.dart';
 import 'package:marca_horario/screens/home_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';

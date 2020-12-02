@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marca_horario/main.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
-import 'package:marca_horario/screens/home.dart';
+import 'package:marca_horario/screens/home_company.dart';
 //import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
@@ -125,11 +125,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   //verify if company username login was successfull
                   if (response.success) {
-                    //verify if the username is a company name.If so, goes to the company's screen.todo:change the Home name to HomeCompany
+                    //verify if the username is a company name.If so, goes to the company's screen.
                     if(await DataUtils.verifyUserIsCompany(_companyController.text)){
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Home(classNameDB: _companyController.text)),
+                        MaterialPageRoute(builder: (context) => HomeCompany(classNameDB: _companyController.text)),
                       );
                     }else{
                       //if the username provided is not a company name

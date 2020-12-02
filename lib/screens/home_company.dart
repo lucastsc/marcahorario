@@ -13,32 +13,22 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
-class Home extends StatefulWidget { //todo:change the name to HomeCompany instead of Home
+class HomeCompany extends StatefulWidget {
 
   final classNameDB;
   //this screen requires the name of the company to generate customized list view only with data relatively to that company
-  Home({Key key, @required this.classNameDB}) : super(key: key);
+  HomeCompany({Key key, @required this.classNameDB}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _HomeCompanyState createState() => _HomeCompanyState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeCompanyState extends State<HomeCompany> {
 
   String text = '';
 
-  //starts communication with the parse server.todo:check if it is necessary, because it was already declared in the main.dart
+  //starts communication with the parse server.
   Future<void> initData() async {
-    await Parse().initialize(
-      kParseApplicationId,
-      kParseServerUrl,
-      masterKey: kParseMasterKey,
-      clientKey: kParseClientKey,
-      debug: true,
-      liveQueryUrl: kLiveQueryUrl,
-      autoSendSessionId: true,
-    );
-
     final ParseResponse response = await Parse().healthCheck();
 
     if (response.success) {
@@ -79,7 +69,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  //when this screen starts, it start the communication with the parse server.todo:check if it is necessary
+  //when this screen starts, it start the communication with the parse server.
   @override
   void initState() {
     super.initState();
@@ -108,77 +98,11 @@ class _HomeState extends State<Home> {
         });},
       child: Scaffold(
           key: _scaffoldKey,
-          bottomNavigationBar: bottomNavigationBar(),
           appBar: AppBar(
             title: Text('Marca Horário'),
           ),
           body: bodyStartScreen()
       ),
-    );
-  }
-
-
-  //todo: what to do with this bottom navbar, because it needs to be persistent between all screens
-  Widget bottomNavigationBar(){
-
-    void _onItemTapped(int index) {
-      setState(() {
-        _selectedIndexBottomNavBar = index;
-      });
-      print(_selectedIndexBottomNavBar);
-      if(_selectedIndexBottomNavBar == 0){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CredentialsScreen()),
-        );
-      }
-      if(_selectedIndexBottomNavBar == 1){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
-      }
-
-      if(_selectedIndexBottomNavBar == 2){
-        DatePicker.showDateTimePicker(context,
-            showTitleActions: true,
-            minTime: DateTime(2020, 1, 1),
-            maxTime: DateTime(2021, 12, 31),
-            onChanged: (date) {
-              print('change $date');
-            },
-            onConfirm: (date) {
-              print('confirm $date');
-              _listTiles.add(DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString());
-              _titleTile = DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString();
-
-              setState(() {
-
-              });
-            },
-            currentTime: DateTime.now(),
-            locale: LocaleType.pt);
-      }
-    }
-
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Login',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.access_time),
-          label: 'Marcar',
-        ),
-      ],
-      currentIndex: _selectedIndexBottomNavBar,
-      selectedItemColor: Colors.amber[800],
-      onTap: _onItemTapped,
     );
   }
 
@@ -621,5 +545,5 @@ class _HomeState extends State<Home> {
     //
     // return dataList;
    }
-   
+
 }
