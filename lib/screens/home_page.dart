@@ -10,9 +10,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   PageController _pageController = PageController();
-  List<Widget> _screen = [SignupScreen(),LoginScreen(),];
+  List<Widget> _screen = [LoginScreen(),SignupScreen(),];
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
   void _onPageChanged(int index){
     setState(() {
       _selectedIndex = index;
@@ -44,12 +44,12 @@ class _HomePageState extends State<HomePage> {
       onTap: _onItemTapped,
       items: [
         BottomNavigationBarItem(
-            icon: Icon(Icons.person_add, color: _selectedIndex == 0 ? Colors.blue : Colors.grey,),
-            label: "Cadastro"
+            icon: Icon(Icons.person, color: _selectedIndex == 0 ? Colors.blue : Colors.grey,),
+            label: "Login"
         ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: _selectedIndex == 1 ? Colors.blue : Colors.grey,),
-            label: "Login"
+            icon: Icon(Icons.person_add, color: _selectedIndex == 1 ? Colors.blue : Colors.grey,),
+            label: "Cadastro"
         ),
       ],
     );
