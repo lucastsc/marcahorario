@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
   PageController _pageController = PageController();
   List<Widget> _screen = [SignupScreen(),LoginScreen(),];
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   void _onPageChanged(int index){
     setState(() {
       _selectedIndex = index;
@@ -22,6 +22,9 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int selectedIndex){
     print(selectedIndex);
     _pageController.jumpToPage(selectedIndex);
+    setState(() {
+
+    });
   }
 
   @override
@@ -41,8 +44,8 @@ class _HomePageState extends State<HomePage> {
       onTap: _onItemTapped,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.person_add, color: _selectedIndex == 0 ? Colors.blue : Colors.grey,),
-          label: "Cadastro"
+            icon: Icon(Icons.person_add, color: _selectedIndex == 0 ? Colors.blue : Colors.grey,),
+            label: "Cadastro"
         ),
         BottomNavigationBarItem(
             icon: Icon(Icons.person, color: _selectedIndex == 1 ? Colors.blue : Colors.grey,),

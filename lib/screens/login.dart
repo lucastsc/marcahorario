@@ -16,17 +16,18 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  //controllers for the client TextFields
   TextEditingController _userController = TextEditingController();
   TextEditingController _passwordUserController = TextEditingController();
   TextEditingController _userCompanyNameController = TextEditingController();
 
+  //controllers for the company TextFields
   TextEditingController _companyController = TextEditingController();
   TextEditingController _passwordCompanyController = TextEditingController();
 
+  //show or hide the client or the company fields, depending on where it's clicked
   bool _companyVisibility = false;
   bool _clientVisibility = false;
-
-  //var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -41,65 +42,64 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget showBody(){
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(
+          children: [
+            InkWell(
+              onTap: (){
+                _companyVisibility == false ? _companyVisibility = true : _companyVisibility = false;
+                _clientVisibility = false;
+                setState(() {
 
-    return Container(
-      child: Column(
-        children: [
-          InkWell(
-            onTap: (){
-              print("card1");
-              _companyVisibility == false ? _companyVisibility = true : _companyVisibility = false;
-              _clientVisibility = false;
-              print(_companyVisibility);
-              setState(() {
-                print("setStated!!!");
-              });
-            },
-            child: Card(
-              child: ListTile(
-                leading: Icon(Icons.apartment),
-                title: Text("Sou empresa"),
+                });
+              },
+              child: Card(
+                child: ListTile(
+                  leading: Icon(Icons.apartment),
+                  title: Text("Sou empresa"),
+                ),
               ),
             ),
-          ),
-          Visibility(
-            child: companyFields(),
-            maintainSize: false,
-            maintainAnimation: true,
-            maintainState: true,
-            visible: _companyVisibility,
-          ),
-          InkWell(
-            onTap: (){
-              print("card2");
-              _clientVisibility == false ? _clientVisibility = true : _clientVisibility = false;
-              _companyVisibility = false;
-              print(_clientVisibility);
-              setState(() {
-                print("setStated!!!");
-              });
-            },
-            child: Card(
-              child: ListTile(
-                leading: Icon(Icons.person),
-                title: Text("Sou cliente"),
+            Visibility(
+              child: companyFields(),
+              maintainSize: false,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: _companyVisibility,
+            ),
+            InkWell(
+              onTap: (){
+                _clientVisibility == false ? _clientVisibility = true : _clientVisibility = false;
+                _companyVisibility = false;
+                print(_clientVisibility);
+                setState(() {
+
+                });
+              },
+              child: Card(
+                child: ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text("Sou cliente"),
+                ),
               ),
             ),
-          ),
-          Visibility(
-            child: clientFields(),
-            maintainSize: false,
-            maintainAnimation: true,
-            maintainState: true,
-            visible: _clientVisibility,
-          ),
-        ],
+            Visibility(
+              child: clientFields(),
+              maintainSize: false,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: _clientVisibility,
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget companyFields(){
     return Container(
+      //a builder to give a context for showing snackbar in case of errors
       child: Builder(
         builder: (context){
           return Column(
@@ -113,27 +113,31 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _passwordCompanyController,
                 decoration: InputDecoration(
-                    labelText: "senha"
+                    labelText: "Senha"
                 ),
               ),
               FlatButton(
                 onPressed: () async{
+
+                  //try to make login with the specified company username and password.todo:investigate the email field if there is no problem putting ""
                   ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,"");
                   var response = await user.login();
 
-                  //verify of user login was successfull
+                  //verify if company username login was successfull
                   if (response.success) {
-                    //verify if is a company name or a user
+                    //verify if the username is a company name.If so, goes to the company's screen.todo:change the Home name to HomeCompany
                     if(await DataUtils.verifyUserIsCompany(_companyController.text)){
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => Home(classNameDB: _companyController.text)),
                       );
                     }else{
+                      //if the username provided is not a company name
                       snackBarCustomError(context, "Não é uma empresa");
                     }
 
                   }else{
+                    //if the company username login was unsuccessfull
                     snackBarLoginParseResponseError(context, response);
                   }
                 },
@@ -195,6 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
 
                     }else{
+                      //if the client user login was unsuccessfull
                       snackBarLoginParseResponseError(context, response);
                     }
                   }
@@ -210,6 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  //snackbar showing the possible error if client login fails
   Widget snackBarLoginParseResponseError(BuildContext context, ParseResponse response){
     String answer = response.error.type != null ? "Erro no login: " + response.error.type : "Erro no login. Motivo desconhecido.";
     final snackBar = SnackBar(content: Text(answer));
@@ -217,6 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   }
 
+  //custom snackbar showing the error if it occurs
   Widget snackBarCustomError(BuildContext context, String text){
     String answer = text;
     final snackBar = SnackBar(content: Text(answer));

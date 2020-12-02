@@ -23,7 +23,7 @@ class _HomeClientState extends State<HomeClient> {
   String text = '';
 
   Future<void> initData() async {
-
+    //checks the health of the Parse connection
     final ParseResponse response = await Parse().healthCheck();
 
     if (response.success) {
@@ -36,69 +36,47 @@ class _HomeClientState extends State<HomeClient> {
     }
   }
 
+  //test function starts the live query with the Parse Server
   Future<void> test() async {
-
     final LiveQuery liveQuery = LiveQuery();
 
+    //makes a query to the Parse Server. Every change in every field in the "Data" class will be reported!
     QueryBuilder<ParseObject> query =
     QueryBuilder<ParseObject>(ParseObject("Data"));
 
+    //establishes a subscription effectively. The tracking starts here.
     Subscription subscription = await liveQuery.client.subscribe(query);
 
     subscription.on(LiveQueryEvent.create, (value) {
       setState(() {
 
       });
-      // print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
-      // print((value as ParseObject).objectId);
-      // print((value as ParseObject).updatedAt);
-      // print((value as ParseObject).createdAt);
-      // print((value as ParseObject).get('objectId'));
-      // print((value as ParseObject).get('updatedAt'));
-      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.update, (value) {
       setState(() {
 
       });
-      // print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
-      // print((value as ParseObject).objectId);
-      // print((value as ParseObject).updatedAt);
-      // print((value as ParseObject).createdAt);
-      // print((value as ParseObject).get('objectId'));
-      // print((value as ParseObject).get('updatedAt'));
-      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.delete, (value) {
       setState(() {
 
       });
-      // print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
-      // print((value as ParseObject).objectId);
-      // print((value as ParseObject).updatedAt);
-      // print((value as ParseObject).createdAt);
-      // print((value as ParseObject).get('objectId'));
-      // print((value as ParseObject).get('updatedAt'));
-      // print((value as ParseObject).get('createdAt'));
     });
   }
 
+  //when the screen starts, start tracking with the live query by initData()
   @override
   void initState() {
     super.initState();
     initData();
   }
 
-  var _listTiles = List<String>();
-  Color _iconColor = Colors.black;
   Color standardIconColor = Colors.black;
   Color alternateIconColor = Colors.green;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
-  int _selectedIndexBottomNavBar = 0;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
-  bool _clientCheckBox = false;
 
   @override
   Widget build(BuildContext context) {
@@ -110,14 +88,6 @@ class _HomeClientState extends State<HomeClient> {
         });},
       child: Scaffold(
           key: _scaffoldKey,
-          //bottomNavigationBar: bottomNavigationBar(),
-          floatingActionButton: FloatingActionButton(
-            onPressed: (){
-              // var user =  ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com").create();
-              // var teste = ParseObject('Testando').create();
-              getDataList();
-            },
-          ),
           appBar: AppBar(
             title: Text('Marca Horário'),
           ),
@@ -164,11 +134,11 @@ class _HomeClientState extends State<HomeClient> {
         Divider(
           color: Colors.black,
         ),
-        // scheduleTile()
       ],
     );
   }
 
+  //return the cards showed in the home client screen
   Widget frontCards(List<Data> dataList, int position){
     return Card(
       child: Column(
@@ -182,25 +152,25 @@ class _HomeClientState extends State<HomeClient> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Checkbox(
+                        //if the card client name is equal to the username logged in, it changes the color of the checkbox
                         activeColor: dataList[position].client == widget.username ? Colors.green : Colors.red,
                         value: dataList[position].clientCheckBox,
                         onChanged: (bool value) async {
-                          if(dataList[position].client  == widget.username || dataList[position].client == "nenhum"){
-
+                          //if the card was not checked yet or if the check was made by the user that is logged in, then...
+                          if(dataList[position].client  == widget.username || dataList[position].client == "nenhum"){ //todo:change the name "nenhum" by a variable called "blank client"
+                            //returns how many schedules the client made
                             var countClientSchedules = await DataUtils.verifyClientAlreadyScheduled("client", widget.username);
-
                             //if user have not scheduled yet
                             if(countClientSchedules == 0){
-                              //if value goes to false, change the client ownership
+                              //if value goes to false, change the client ownership and updates data in the database
                               value == false ? dataList[position].client = "nenhum" : dataList[position].client = widget.username;
                               dataList[position].clientCheckBox = value;
                               DataUtils.updateData(dataList[position]);
                             }
-
                             //if user have already scheduled
                             if(countClientSchedules == 1){
                               if(dataList[position].client  == widget.username){
-                                //if value goes to false, change the client ownership
+                                //if value goes to false, change the client ownership and updates data in the database
                                 value == false ? dataList[position].client = "nenhum" : dataList[position].client = widget.username;
                                 dataList[position].clientCheckBox = value;
                                 DataUtils.updateData(dataList[position]);
@@ -210,6 +180,7 @@ class _HomeClientState extends State<HomeClient> {
                             }
 
                           }else{
+                            //if the client logged in is different from the client of the card
                             _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Você não pode alterar a marcação de outra pessoa.Tente outro horário!"), duration: Duration(milliseconds: 1500),));
                           }
                           setState(() {
@@ -244,6 +215,7 @@ class _HomeClientState extends State<HomeClient> {
     );
   }
 
+  //shows a widget if there is no data for the created company yet
   Widget warningLoading(){
     return Container(
       child: Card(
@@ -256,11 +228,9 @@ class _HomeClientState extends State<HomeClient> {
 
   Future <List<Data>> getDataList() async {
     List<Data> dataList = [];
-
     //gets exclusively data relatively to widget.classnameDB
     ParseResponse response = await DataUtils.getDataList(
         "companyName", widget.classNameDB);
-
     if (response.success) {
       for (ParseObject parseObject in response.results) {
         dataList.add(Data.fromJson(parseObject.toJson()));
@@ -270,26 +240,6 @@ class _HomeClientState extends State<HomeClient> {
     }
 
     return dataList;
-
-      // Response response = await DataUtils.getDataList(widget.classNameDB);
-      // //Response response = await DataUtils.getDataList("companyName",widget.classNameDB);
-      // print("Code is ${response.statusCode}");
-      // print("Response is ${response.body}");
-      //
-      // if (response.statusCode == 200) {
-      //   var body = json.decode(response.body);
-      //   var results = body["results"];
-      //   print("BODY: " + body.toString());
-      //   print("RESULTS: "+results.toString());
-      //   for (var data in results) {
-      //     dataList.add(Data.fromJson(data));
-      //   }
-      //
-      // } else {
-      //   //Handle error
-      // }
-      //
-      // return dataList;
-    }
+  }
 }
 

@@ -22,7 +22,7 @@ class Data {
     this.dateTime,
     this.employee,
     this.companyName,
-    this.clientCheckBox,
+    this.clientCheckBox, //if the user checked the box, scheduling a time with the employee
     this.client,
     this.clientPhone,
   });

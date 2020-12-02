@@ -40,7 +40,7 @@ class DataUtils {
   //   return response;
   // }
 
-  //Using exclusively parse library
+  //Using exclusively parse library for getting data from "Data" class in the Parse Server
   static Future getDataList(String colname, String classNameDB) async{
 
 
@@ -51,36 +51,6 @@ class DataUtils {
     ParseResponse apiResponse = await queryColname.query();
 
     return apiResponse;
-  }
-
-  static Future verifyClientAlreadyScheduled(String colName, String username) async{
-    QueryBuilder<ParseObject> queryUserName =
-    QueryBuilder<ParseObject>(ParseObject("Data"))
-      ..whereEqualTo(colName, username);
-
-    ParseResponse apiResponse = await queryUserName.query();
-    return apiResponse.count;
-  }
-
-  static Future verifyCompanyExists(String colName, String companyName) async{
-    QueryBuilder<ParseObject> queryCompanyName =
-    QueryBuilder<ParseObject>(ParseObject("Data"))
-      ..whereEqualTo(colName, companyName);
-
-    ParseResponse apiResponse = await queryCompanyName.query();
-    bool exists = apiResponse.count >= 1 ? true : false;
-    return exists;
-  }
-
-  static Future verifyUserIsCompany(String companyName) async{
-    QueryBuilder<ParseObject> queryCompanyName =
-    QueryBuilder<ParseObject>(ParseObject("_User"))
-      ..whereEqualTo("username", companyName)
-      ..whereEqualTo("isCompany", true);
-
-    ParseResponse apiResponse = await queryCompanyName.query();
-    bool exists = apiResponse.count != 0 ? true : false;
-    return exists;
   }
 
   //UPDATE
@@ -112,4 +82,38 @@ class DataUtils {
 
     return response;
   }
+
+  //Checks in the "Data" class if the specified username is present in the colName.It returns how many of it.
+  static Future verifyClientAlreadyScheduled(String colName, String username) async{
+    QueryBuilder<ParseObject> queryUserName =
+    QueryBuilder<ParseObject>(ParseObject("Data"))
+      ..whereEqualTo(colName, username);
+
+    ParseResponse apiResponse = await queryUserName.query();
+    return apiResponse.count;
+  }
+
+  //Checks in the "Data" class if the specified companyName is present.If it is present, returns true.
+  static Future verifyCompanyExists(String colName, String companyName) async{
+    QueryBuilder<ParseObject> queryCompanyName =
+    QueryBuilder<ParseObject>(ParseObject("Data"))
+      ..whereEqualTo(colName, companyName);
+
+    ParseResponse apiResponse = await queryCompanyName.query();
+    bool exists = apiResponse.count >= 1 ? true : false;
+    return exists;
+  }
+
+  //Checks in the "_User" class if the specified name is a company.If so, returns true
+  static Future verifyUserIsCompany(String companyName) async{
+    QueryBuilder<ParseObject> queryCompanyName =
+    QueryBuilder<ParseObject>(ParseObject("_User"))
+      ..whereEqualTo("username", companyName)
+      ..whereEqualTo("isCompany", true);
+
+    ParseResponse apiResponse = await queryCompanyName.query();
+    bool exists = apiResponse.count != 0 ? true : false;
+    return exists;
+  }
+
 }

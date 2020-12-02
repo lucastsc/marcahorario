@@ -17,19 +17,24 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+
+  //client fields controllers
   TextEditingController _userController = TextEditingController();
   TextEditingController _passwordUserController = TextEditingController();
   TextEditingController _userCompanyNameController = TextEditingController();
   TextEditingController _userEmailController = TextEditingController();
   TextEditingController _userPhoneController = TextEditingController();
 
+  //company fields controllers
   TextEditingController _companyController = TextEditingController();
   TextEditingController _passwordCompanyController = TextEditingController();
   TextEditingController _emailCompanyController = TextEditingController();
 
+  //turn on or off client and company fields, depending on where it's clicked
   bool _companyVisibility = false;
   bool _clientVisibility = false;
 
+  //mask formatter for the telephone field (client)
   var maskFormatter = new MaskTextInputFormatter(mask: '(##) #####-####', filter: { "#": RegExp(r'[0-9]') });
 
   @override
@@ -44,20 +49,18 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  //contains client and company fields (TextEditings)
   Widget showBody(){
-
     return SingleChildScrollView(
       child: Container(
         child: Column(
           children: [
             InkWell(
               onTap: (){
-                print("card1");
                 _companyVisibility == false ? _companyVisibility = true : _companyVisibility = false;
                 _clientVisibility = false;
-                print(_companyVisibility);
                 setState(() {
-                  print("setStated!!!");
+
                 });
               },
               child: Card(
@@ -76,12 +79,10 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             InkWell(
               onTap: (){
-                print("card2");
                 _clientVisibility == false ? _clientVisibility = true : _clientVisibility = false;
                 _companyVisibility = false;
-                print(_clientVisibility);
                 setState(() {
-                  print("setStated!!!");
+
                 });
               },
               child: Card(
@@ -105,6 +106,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Widget companyFields(){
+    //Builder to give a context to show snackbars in case of errors.They need a context.
     return Builder(
       builder: (context){
         return Container(
@@ -128,30 +130,31 @@ class _SignupScreenState extends State<SignupScreen> {
                     labelText: "Email"
                 ),
               ),
+              //button to signup
               FlatButton(
                 onPressed: () async{
-
+                  //creates a user that is a company (see the isCompany = true attribute)
                   ParseUser user = ParseUser(_companyController.text,_passwordCompanyController.text,_emailCompanyController.text)
                     ..set("isCompany", true);
 
-
+                  //if this company exists in the _User class...
                   if(await DataUtils.verifyUserIsCompany(_companyController.text)){
                     snackBarCustomError(context, "Essa empresa já existe!Tente outro nome.");
                   }else{
+                    //if this company doesn't exists in the _User class...
+                    //saves the user in the database class _User
                     var response = await user.save();
+                    //if the user was successfully saved to the _User class, go to HomePage()
                     if (response.success) {
-                      print("CRIACAO EMPRESA: " + response.result.toString());
-                      print(response.result);
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => HomePage()),
                       );
                     }else{
-                      print(response.error);
+                      //if the user wasn't successfully saved to the _User class, shows error in snackbar
                       snackBarCustomError(context, "Erro: " + response.error.type);
                     }
                   }
-
                 },
                 child: Text("Cadastrar"),
               )
@@ -163,59 +166,67 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Widget clientFields(){
-    return Container(
-      child: Column(
-        children: [
-          TextField(
-            controller: _userController,
-            decoration: InputDecoration(
-                labelText: "Usuário"
-            ),
-          ),
-          TextField(
-            controller: _passwordUserController,
-            decoration: InputDecoration(
-                labelText: "Senha"
-            ),
-          ),
-          TextField(
-            controller: _userEmailController,
-            decoration: InputDecoration(
-                labelText: "Email"
-            ),
-          ),
-          TextField(
-            controller: _userPhoneController,
-            decoration: InputDecoration(
-              labelText: "Telefone"
-            ),
-              inputFormatters: [maskFormatter]
-          ),
-          FlatButton(
-            onPressed: () async{
-              ParseUser user = ParseUser(_userController.text,_passwordUserController.text,_userEmailController.text)
-                ..set("phone", _userPhoneController.text)
-                ..set("isCompany", false);
+    //a builder to give a context to show snackbars in case of errors
+    return Builder(
+      builder: (context){
+        return Container(
+          child: Column(
+            children: [
+              TextField(
+                controller: _userController,
+                decoration: InputDecoration(
+                    labelText: "Usuário"
+                ),
+              ),
+              TextField(
+                controller: _passwordUserController,
+                decoration: InputDecoration(
+                    labelText: "Senha"
+                ),
+              ),
+              TextField(
+                controller: _userEmailController,
+                decoration: InputDecoration(
+                    labelText: "Email"
+                ),
+              ),
+              TextField(
+                  controller: _userPhoneController,
+                  decoration: InputDecoration(
+                      labelText: "Telefone"
+                  ),
+                  inputFormatters: [maskFormatter]
+              ),
+              //a button to signup
+              FlatButton(
+                onPressed: () async{
+                  //creates a user of client type (see the isCompany = false attribute)
+                  ParseUser user = ParseUser(_userController.text,_passwordUserController.text,_userEmailController.text)
+                    ..set("phone", _userPhoneController.text)
+                    ..set("isCompany", false);
 
-              var response = await user.save();
-              if (response.success) {
-                print("CRIACAO USUARIO: " + response.result.toString());
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
-              }else{
-                print(response.error);
-                snackBarCustomError(context, "Erro: " + response.error.type);
-              }
-            },
-            child: Text("Cadastrar"),
-          )
-        ],
-      ),
+                  var response = await user.save();
+                  //if the user of client type is successfully saved into the _User class database...
+                  if (response.success) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
+                  }else{
+                    //if the user of client type was not successfully saved into the _User class database...
+                    snackBarCustomError(context, "Erro: " + response.error.type);
+                  }
+                },
+                child: Text("Cadastrar"),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
+  //custom snackbar for showing messages in case of error
   Widget snackBarCustomError(BuildContext context, String text){
     String answer = text;
     final snackBar = SnackBar(content: Text(answer));

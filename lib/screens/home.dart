@@ -13,9 +13,10 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 
-class Home extends StatefulWidget {
+class Home extends StatefulWidget { //todo:change the name to HomeCompany instead of Home
 
   final classNameDB;
+  //this screen requires the name of the company to generate customized list view only with data relatively to that company
   Home({Key key, @required this.classNameDB}) : super(key: key);
 
   @override
@@ -26,6 +27,7 @@ class _HomeState extends State<Home> {
 
   String text = '';
 
+  //starts communication with the parse server.todo:check if it is necessary, because it was already declared in the main.dart
   Future<void> initData() async {
     await Parse().initialize(
       kParseApplicationId,
@@ -49,13 +51,12 @@ class _HomeState extends State<Home> {
     }
   }
 
+  //function for starting the live query
   Future<void> test() async {
-
     final LiveQuery liveQuery = LiveQuery();
 
     QueryBuilder<ParseObject> query =
     QueryBuilder<ParseObject>(ParseObject("Data"));
-    //..whereEqualTo('intNumber', 1);
 
     Subscription subscription = await liveQuery.client.subscribe(query);
 
@@ -63,48 +64,27 @@ class _HomeState extends State<Home> {
       setState(() {
 
       });
-      // print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
-      // print((value as ParseObject).objectId);
-      // print((value as ParseObject).updatedAt);
-      // print((value as ParseObject).createdAt);
-      // print((value as ParseObject).get('objectId'));
-      // print((value as ParseObject).get('updatedAt'));
-      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.update, (value) {
       setState(() {
 
       });
-      // print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
-      // print((value as ParseObject).objectId);
-      // print((value as ParseObject).updatedAt);
-      // print((value as ParseObject).createdAt);
-      // print((value as ParseObject).get('objectId'));
-      // print((value as ParseObject).get('updatedAt'));
-      // print((value as ParseObject).get('createdAt'));
     });
 
     subscription.on(LiveQueryEvent.delete, (value) {
       setState(() {
 
       });
-      // print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
-      // print((value as ParseObject).objectId);
-      // print((value as ParseObject).updatedAt);
-      // print((value as ParseObject).createdAt);
-      // print((value as ParseObject).get('objectId'));
-      // print((value as ParseObject).get('updatedAt'));
-      // print((value as ParseObject).get('createdAt'));
     });
   }
 
+  //when this screen starts, it start the communication with the parse server.todo:check if it is necessary
   @override
   void initState() {
     super.initState();
     initData();
   }
-
 
   var _listTiles = List<String>();
   Color _iconColor = Colors.black;
@@ -129,23 +109,16 @@ class _HomeState extends State<Home> {
       child: Scaffold(
           key: _scaffoldKey,
           bottomNavigationBar: bottomNavigationBar(),
-          // floatingActionButton: FloatingActionButton(
-          //   onPressed: (){
-          //     // var user =  ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com").create();
-          //     // var teste = ParseObject('Testando').create();
-          //   },
-          // ),
           appBar: AppBar(
             title: Text('Marca Horário'),
           ),
-          // body: Center(
-          //   child: Text('Hello World'),
           body: bodyStartScreen()
       ),
     );
   }
 
 
+  //todo: what to do with this bottom navbar, because it needs to be persistent between all screens
   Widget bottomNavigationBar(){
 
     void _onItemTapped(int index) {
@@ -230,42 +203,6 @@ class _HomeState extends State<Home> {
               child: ListView.builder(
                 itemBuilder: (_, position) {
                   return frontCards(dataList, position);
-                  // return Card(
-                  //   child: ListTile(
-                  //     title: Text(dataList[position].dateTime == null ? "modificando...aguarde" : dataList[position].dateTime),
-                  //     subtitle: Container(
-                  //       child: Column(
-                  //         children: [
-                  //           Row(
-                  //             children: [
-                  //               Text("Funcionário disponível: "),
-                  //               Text(dataList[position].employee == null ? "modificando...aguarde": dataList[position].employee),
-                  //             ],
-                  //           ),
-                  //           Text("Cliente agendado: "),
-                  //           Text(dataList[position].client == null ? "modificando...aguarde": dataList[position].client),
-                  //
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     trailing: Row(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: <Widget>[
-                  //         IconButton(icon: Icon(Icons.edit), onPressed: () {
-                  //           //Show dialog box to update item
-                  //           showUpdateDialog(dataList[position]);
-                  //         }),
-                  //         IconButton(icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
-                  //
-                  //         }),
-                  //         //Show dialog box to delete item
-                  //         IconButton(icon: Icon(Icons.delete), onPressed: () {
-                  //           deleteData(dataList[position].objectId);
-                  //         }),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // );
                 },
                 itemCount: dataList.length,
               ),
@@ -273,9 +210,6 @@ class _HomeState extends State<Home> {
 
           } else {
             return warningLoading();
-            // return Center(
-            //   child: CircularProgressIndicator(),
-            // );
           }
         },
           future: getDataList(),
@@ -288,6 +222,7 @@ class _HomeState extends State<Home> {
     );
   }
 
+  //cards exhibited in the company's screen
   Widget frontCards(List<Data> dataList, int position){
     String phoneNumber = dataList[position].clientPhone;
 
@@ -306,12 +241,7 @@ class _HomeState extends State<Home> {
                         //Show dialog box to update item
                         showUpdateDialog(dataList[position]);
                       }),
-                      // IconButton(
-                      //     icon: Icon(Icons.check_circle, color: Colors.green,), onPressed: () {
-                      //
-                      // }),
                         dataList[position].clientCheckBox == true ? Icon(Icons.check_circle, color: Colors.green,) : Icon(Icons.check_circle, color: Colors.grey,),
-
                       //Show dialog box to delete item
                       IconButton(icon: Icon(Icons.delete), onPressed: () {
                         deleteData(dataList[position].objectId);
@@ -333,7 +263,7 @@ class _HomeState extends State<Home> {
           Row(
             children: [
               Padding(padding: EdgeInsets.only(left: 16.0),),
-              Flexible(
+              Flexible(//todo: change the name "nenhum"
                 child: dataList[position].client != "nenhum" ? Text("Cliente: " + dataList[position].client, style: TextStyle(fontWeight: FontWeight.bold)) : Text("Cliente: " + dataList[position].client)
               ),
             ],
@@ -391,9 +321,7 @@ class _HomeState extends State<Home> {
   }
 
   void showUpdateDialog(Data data) {
-
     _nameController.text = data.employee;
-
     showDialog(context: context,
         builder: (_) => AlertDialog(
           content: Container(
@@ -556,7 +484,6 @@ class _HomeState extends State<Home> {
   }
 
   void addData() {
-
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Row(
       children: <Widget>[
         Text("Adicionando informações..."),
@@ -694,6 +621,5 @@ class _HomeState extends State<Home> {
     //
     // return dataList;
    }
-
-
+   
 }
