@@ -1,4 +1,5 @@
 import 'package:marca_horario/model/data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //function to sort the dataList by dateTime
 void sortDataListByDateTime(List<Data> dataList){
@@ -27,4 +28,20 @@ String convertDateTimeString(String beforeString){
   if(arraySplit[3] == 'dez'){month = "12";}
   String afterString = year + '-' + month + '-' + day + ' ' + time;
   return afterString;//gives 2020-11-29 14:19 for example
+}
+
+void saveStringOnSharedPreferences(String keyString, String value) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString(keyString, value);
+}
+
+Future<String> recoverStringFromSharedPreferences(String keyString) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String stringValue = prefs.getString(keyString);
+  return stringValue;
+}
+
+void removeStringFromSharedPreferences(String keyValue) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.remove(keyValue);
 }

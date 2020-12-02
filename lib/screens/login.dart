@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marca_horario/main.dart';
+import 'package:marca_horario/misc/general_functions.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:marca_horario/screens/home_company.dart';
 //import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -8,6 +9,8 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:marca_horario/constants.dart';
 import 'package:marca_horario/screens/home_client.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -15,6 +18,34 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  String _clientname;
+  String _clientpassword;
+
+  String _companyname;
+  String _companypassword;
+
+  void loadSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _clientname = prefs.getString("sf_clientname");
+    _clientpassword = prefs.getString("sf_clientpassword");
+
+    _companyname = prefs.getString("sf_companyname");
+    _companypassword = prefs.getString("sf_companypassword");
+
+    setState(() {
+      _userController..text = _clientname;
+      _passwordUserController..text = _clientpassword;
+      _companyController..text = _companyname;
+      _passwordCompanyController..text = _companypassword;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadSharedPreferences();
+  }
 
   //controllers for the client TextFields
   TextEditingController _userController = TextEditingController();
@@ -127,6 +158,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (response.success) {
                     //verify if the username is a company name.If so, goes to the company's screen.
                     if(await DataUtils.verifyUserIsCompany(_companyController.text)){
+
+                      //Save credentials on SharedPreferences
+                      saveStringOnSharedPreferences("sf_companyname",_companyController.text);
+                      saveStringOnSharedPreferences("sf_companypassword", _passwordCompanyController.text);
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => HomeCompany(classNameDB: _companyController.text)),
@@ -187,6 +223,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     //verify of user login was successfull
                     if (response.success) {
+
+                      //Save credentials on SharedPreferences
+                      saveStringOnSharedPreferences("sf_clientname",_userController.text);
+                      saveStringOnSharedPreferences("sf_clientpassword", _passwordUserController.text);
 
                       //verify if company name exists
                       if(await DataUtils.verifyCompanyExists("companyName", _userCompanyNameController.text)){
