@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:marca_horario/model/data.dart';
 import 'package:marca_horario/network_utils/data_utils.dart';
 import 'package:http/http.dart';
@@ -114,6 +115,8 @@ class _HomeClientState extends State<HomeClient> {
         FutureBuilder(builder: (context,snapshot){
           if (snapshot.data != null) {
             List<Data> dataList = snapshot.data;
+            print("DATALIST: " + dataList.toString());
+            sortDataListByDateTime(dataList);
               return Expanded(
                 child: ListView.builder(
                   itemBuilder: (_, position) {
@@ -241,5 +244,35 @@ class _HomeClientState extends State<HomeClient> {
 
     return dataList;
   }
-}
 
+  void sortDataListByDateTime(List<Data> dataList){
+    //DateFormat.yMMMEd('pt_BR').add_Hm().format(date).toString()
+    // DateFormat.yMd('en_US').add_Hm().format()
+    // //dateTime is in format yMMMEd
+    // dataList.sort((a,b) => DateTime.parse(a.dateTime).compareTo(DateTime.parse(b.dateTime)));
+    dataList.sort((a,b) => DateTime.parse(convertDateTimeString(a.dateTime)).compareTo(DateTime.parse(convertDateTimeString(b.dateTime))));
+  }
+
+  String convertDateTimeString(String beforeString){
+    var arraySplit = beforeString.split(' ');//gives dom, 29 de nov de 2020 14:19
+    String day = arraySplit[1];
+    if(int.parse(day) >= 1 && int.parse(day) <= 9){ day = "0" + arraySplit[1];}else{day = arraySplit[1];}
+    String month;
+    String year = arraySplit[5];
+    String time = arraySplit[6];
+    if(arraySplit[3] == 'jan'){month = "01";}
+    if(arraySplit[3] == 'fev'){month = "02";}
+    if(arraySplit[3] == 'mar'){month = "03";}
+    if(arraySplit[3] == 'abr'){month = "04";}
+    if(arraySplit[3] == 'mai'){month = "05";}
+    if(arraySplit[3] == 'jun'){month = "06";}
+    if(arraySplit[3] == 'jul'){month = "07";}
+    if(arraySplit[3] == 'ago'){month = "08";}
+    if(arraySplit[3] == 'set'){month = "09";}
+    if(arraySplit[3] == 'out'){month = "10";}
+    if(arraySplit[3] == 'nov'){month = "11";}
+    if(arraySplit[3] == 'dez'){month = "12";}
+    String afterString = year + '-' + month + '-' + day + ' ' + time;
+    return afterString;
+  }
+}
