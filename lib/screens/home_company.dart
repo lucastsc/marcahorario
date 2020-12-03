@@ -181,7 +181,7 @@ class _HomeCompanyState extends State<HomeCompany> {
             children: [
               Padding(padding: EdgeInsets.only(left: 16.0),),
               Flexible(
-                child: Text("Funcionário: " + dataList[position].employee),
+                child: dataList[position].employee != null ? Text("Funcionário: " + dataList[position].employee) : Text("modificando...aguarde"),
               )
             ],
           ),

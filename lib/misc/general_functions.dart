@@ -3,7 +3,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //function to sort the dataList by dateTime
 void sortDataListByDateTime(List<Data> dataList){
-  dataList.sort((a,b) => DateTime.parse(convertDateTimeString(a.dateTime)).compareTo(DateTime.parse(convertDateTimeString(b.dateTime))));
+  //regex for dateTime of BR: seg, 29 de nov de 2020 18:56, for example
+  RegExp regexDateTime = new RegExp(r"[A-zÀ-ú]{3},\s[0-9]+\s[a-z]{2}\s[a-z]{3}\s[a-z]{2}\s\d{4}\s\d{2}\:\d{2}");
+
+  bool allDateTimeNotNull = dataList.every((element) => element.dateTime != null);
+  if(allDateTimeNotNull){
+    bool allElementsMatch = dataList.every((element) => regexDateTime.hasMatch(element.dateTime));
+    //It only will sort by dateTime if dateTime is in the RegEx format
+    if(allElementsMatch){
+      dataList.sort((a,b) => DateTime.parse(convertDateTimeString(a.dateTime)).compareTo(DateTime.parse(convertDateTimeString(b.dateTime))));
+    }else{
+      print("NOT ALL ELEMENTS MATCH!");
+    }
+  }else{
+    print("THERE ARE SOME DATETIME NULL");
+  }
 }
 
 //convert dateTime string from the BR format to a string standard dateTime able to be parsed as datetime. It's output allows to be parsed correctly.

@@ -117,7 +117,6 @@ class _HomeClientState extends State<HomeClient> {
         FutureBuilder(builder: (context,snapshot){
           if (snapshot.data != null) {
             List<Data> dataList = snapshot.data;
-            print("DATALIST: " + dataList.toString());
             sortDataListByDateTime(dataList);
               return Expanded(
                 child: ListView.builder(
@@ -211,7 +210,7 @@ class _HomeClientState extends State<HomeClient> {
             children: [
               Padding(padding: EdgeInsets.only(left: 16.0),),
               Flexible(
-                child: Text("Funcionário: " + dataList[position].employee),
+                child: dataList[position].employee != null ? Text("Funcionário: " + dataList[position].employee) : Text("modificando...aguarde"),
               )
             ],
           ),
