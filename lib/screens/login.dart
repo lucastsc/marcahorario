@@ -232,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if(await DataUtils.verifyCompanyExists("companyName", _userCompanyNameController.text)){
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomeClient(classNameDB: _userCompanyNameController.text,username: _userController.text,)),
+                          MaterialPageRoute(builder: (context) => HomeClient(companyName: _userCompanyNameController.text,username: _userController.text,)),
                         );
                       }else{
                         snackBarCustomError(context, "Essa empresa não existe ainda.");

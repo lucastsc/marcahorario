@@ -95,10 +95,11 @@ class DataUtils {
   }
 
   //Checks in the "Data" class if the specified username is present in the colName.It returns how many of it.
-  static Future verifyClientAlreadyScheduled(String colName, String username) async{
+  static Future verifyClientAlreadyScheduled(String colName, String username, String companyName) async{
     QueryBuilder<ParseObject> queryUserName =
     QueryBuilder<ParseObject>(ParseObject("Data"))
-      ..whereEqualTo(colName, username);
+      ..whereEqualTo(colName, username)
+      ..whereEqualTo("companyName", companyName);
 
     ParseResponse apiResponse = await queryUserName.query();
     return apiResponse.count;

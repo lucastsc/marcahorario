@@ -14,9 +14,9 @@ import 'package:marca_horario/constants.dart';
 
 class HomeClient extends StatefulWidget {
 
-  final classNameDB;
+  final companyName;
   final username;
-  HomeClient({Key key, @required this.classNameDB, this.username}) : super(key: key);
+  HomeClient({Key key, @required this.companyName, this.username}) : super(key: key);
 
   @override
   _HomeClientState createState() => _HomeClientState();
@@ -164,7 +164,7 @@ class _HomeClientState extends State<HomeClient> {
                           //if the card was not checked yet or if the check was made by the user that is logged in, then...
                           if(dataList[position].client  == widget.username || dataList[position].client == "nenhum"){ //todo:change the name "nenhum" by a variable called "blank client"
                             //returns how many schedules the client made
-                            var countClientSchedules = await DataUtils.verifyClientAlreadyScheduled("client", widget.username);
+                            var countClientSchedules = await DataUtils.verifyClientAlreadyScheduled("client", widget.username,widget.companyName);
 
                             //if user have not scheduled yet
                             if(countClientSchedules == 0){
@@ -243,7 +243,7 @@ class _HomeClientState extends State<HomeClient> {
     List<Data> dataList = [];
     //gets exclusively data relatively to widget.classnameDB
     ParseResponse response = await DataUtils.getDataList(
-        "companyName", widget.classNameDB);
+        "companyName", widget.companyName);
     if (response.success) {
       for (ParseObject parseObject in response.results) {
         dataList.add(Data.fromJson(parseObject.toJson()));
