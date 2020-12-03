@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String _clientname;
   String _clientpassword;
+  String _clientCompanyName;
 
   String _companyname;
   String _companypassword;
@@ -29,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _clientname = prefs.getString("sf_clientname");
     _clientpassword = prefs.getString("sf_clientpassword");
+    _clientCompanyName = prefs.getString("sf_clientcompanyname");
 
     _companyname = prefs.getString("sf_companyname");
     _companypassword = prefs.getString("sf_companypassword");
@@ -36,6 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _userController..text = _clientname;
       _passwordUserController..text = _clientpassword;
+      _userCompanyNameController..text = _clientCompanyName;
+
       _companyController..text = _companyname;
       _passwordCompanyController..text = _companypassword;
     });
@@ -227,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       //Save credentials on SharedPreferences
                       saveStringOnSharedPreferences("sf_clientname",_userController.text);
                       saveStringOnSharedPreferences("sf_clientpassword", _passwordUserController.text);
+                      saveStringOnSharedPreferences("sf_clientcompanyname", _userCompanyNameController.text);
 
                       //verify if company name exists
                       if(await DataUtils.verifyCompanyExists("companyName", _userCompanyNameController.text)){

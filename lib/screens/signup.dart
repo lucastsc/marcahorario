@@ -66,7 +66,7 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Card(
                 child: ListTile(
                   leading: Icon(Icons.apartment),
-                  title: Text("Sou empresa"),
+                  title: Text("Cadastrar minha empresa"),
                 ),
               ),
             ),
@@ -88,7 +88,7 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Card(
                 child: ListTile(
                   leading: Icon(Icons.person),
-                  title: Text("Sou cliente"),
+                  title: Text("Cadastrar como cliente"),
                 ),
               ),
             ),
